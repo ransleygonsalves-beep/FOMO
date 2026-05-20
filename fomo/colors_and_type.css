@@ -1,0 +1,306 @@
+/* =============================================================
+   FOMO Design System — Tokens
+   Colors and Typography
+   -----------------------------------------------------------
+   Source: FOMO Brand Guidelines (Color Palette + Primary
+   Typography sheets). Primary palette is Black / White /
+   Flamingo Pink / Beige (warm cream). Secondary palette adds
+   muted greens that nod to the tropical-foliage motif.
+   ============================================================= */
+
+/* ---- Webfonts ----
+   DM Serif Display + DM Sans served locally from licensed brand TTFs in fonts/.
+   DM Sans uses a variable TTF (upright) and a separate italic variable TTF. */
+@font-face {
+  font-family: "DM Serif Display";
+  src: url("fonts/DMSerifDisplay-Regular.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "DM Serif Display";
+  src: url("fonts/DMSerifDisplay-Italic.ttf") format("truetype");
+  font-weight: 400;
+  font-style: italic;
+  font-display: swap;
+}
+@font-face {
+  font-family: "DM Sans";
+  src: url("fonts/DMSans-VariableFont_opsz_wght.ttf") format("truetype-variations");
+  font-weight: 100 1000;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "DM Sans";
+  src: url("fonts/DMSans-Italic-VariableFont_opsz_wght.ttf") format("truetype-variations");
+  font-weight: 100 1000;
+  font-style: italic;
+  font-display: swap;
+}
+
+:root {
+  /* ============================================================
+     COLOR — PRIMARY PALETTE
+     Black, White, Flamingo Pink, Beige (warm cream)
+     ============================================================ */
+  --fomo-black: #111111;            /* Pantone Black 6 C */
+  --fomo-white: #ffffff;            /* Pantone White / 11-0601 TCX */
+  --fomo-pink:  #fcc9ca;            /* Pantone 700 C — Flamingo Pink */
+  --fomo-beige: #f9f4e8;            /* Pantone 9183 C — warm cream */
+
+  /* ---- Pink scale (derived from Flamingo Pink) ----
+     Useful for tints, hover/press states, soft fills. */
+  --fomo-pink-50:  #fff5f5;
+  --fomo-pink-100: #ffe5e6;
+  --fomo-pink-200: #fcc9ca;          /* base */
+  --fomo-pink-300: #f7adaf;
+  --fomo-pink-400: #ec8b8e;
+  --fomo-pink-500: #d96f72;          /* deepened, button-press */
+  --fomo-pink-600: #b85356;
+
+  /* ---- Beige / Cream scale ---- */
+  --fomo-beige-50:  #fefcf6;
+  --fomo-beige-100: #f9f4e8;         /* base */
+  --fomo-beige-200: #f1eada;
+  --fomo-beige-300: #e6dcc4;
+
+  /* ---- Black / Neutral scale ----
+     Anchored to Pantone Black 6 C, then warmed slightly. */
+  --fomo-ink-900: #111111;           /* base black */
+  --fomo-ink-800: #1f1f1f;
+  --fomo-ink-700: #333333;
+  --fomo-ink-500: #5b5b5b;
+  --fomo-ink-400: #8a8a8a;
+  --fomo-ink-300: #b8b8b8;
+  --fomo-ink-200: #dcdcdc;
+  --fomo-ink-100: #ececec;
+  --fomo-ink-50:  #f6f6f6;
+
+  /* ============================================================
+     COLOR — SECONDARY PALETTE
+     Tropical foliage greens, used sparingly as accents.
+     ============================================================ */
+  --fomo-green-light: #eaf4df;
+  --fomo-green-dark:  #738c70;
+
+  /* ============================================================
+     SEMANTIC TOKENS
+     Use these in product surfaces; refer to primitives above
+     only when defining new components.
+     ============================================================ */
+
+  /* Surfaces */
+  --bg:           var(--fomo-beige);     /* default page background — warm cream */
+  --bg-alt:       var(--fomo-beige-50);  /* lifted surface, modal bg */
+  --bg-inverse:   var(--fomo-black);     /* black panels, hero blocks */
+  --bg-accent:    var(--fomo-pink);      /* pink hero / promo blocks */
+  --bg-soft:      var(--fomo-pink-50);   /* very soft pink wash */
+  --bg-leaf:      var(--fomo-green-light); /* leafy section background */
+
+  /* Foreground / text */
+  --fg:           var(--fomo-ink-900);   /* primary text */
+  --fg-1:         var(--fomo-ink-900);   /* alias */
+  --fg-2:         var(--fomo-ink-700);   /* body text */
+  --fg-3:         var(--fomo-ink-500);   /* secondary / captions */
+  --fg-4:         var(--fomo-ink-400);   /* tertiary / disabled */
+  --fg-on-dark:   var(--fomo-white);
+  --fg-on-pink:   var(--fomo-black);
+  --fg-on-beige:  var(--fomo-black);
+  --fg-accent:    var(--fomo-green-dark);
+
+  /* Borders & dividers */
+  --border:        var(--fomo-ink-200);
+  --border-strong: var(--fomo-ink-900);
+  --hairline:      var(--fomo-ink-100);
+
+  /* Brand actions */
+  --brand:         var(--fomo-black);    /* primary CTA */
+  --brand-hover:   var(--fomo-ink-800);
+  --brand-press:   var(--fomo-ink-700);
+  --brand-soft:    var(--fomo-pink);
+  --brand-soft-hover: var(--fomo-pink-300);
+
+  /* Status (kept on-brand: soft, warm) */
+  --success:       #6f8f6c;              /* echoes secondary green */
+  --warning:       #c98a3a;
+  --danger:        #b85356;              /* deepened flamingo */
+  --info:          #5b6e7a;
+
+  /* ============================================================
+     TYPOGRAPHY — FAMILIES
+     Brand uses DM Serif Display for headlines, DM Sans for
+     copy. No mono spec in source — using DM Mono fallback.
+     ============================================================ */
+  --font-display: "DM Serif Display", "Playfair Display", Georgia, serif;
+  --font-sans:    "DM Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --font-mono:    "DM Mono", ui-monospace, "SF Mono", Menlo, monospace;
+
+  /* ---- Type scale (display-leaning, brand book style) ---- */
+  --fs-display-1: clamp(56px, 7vw, 96px);
+  --fs-display-2: clamp(40px, 5vw, 72px);
+  --fs-h1:        clamp(36px, 4vw, 56px);
+  --fs-h2:        clamp(28px, 3vw, 40px);
+  --fs-h3:        24px;
+  --fs-h4:        20px;
+  --fs-body:      16px;
+  --fs-body-sm:   14px;
+  --fs-caption:   12px;
+  --fs-eyebrow:   12px;
+
+  /* ---- Weights ---- */
+  --fw-regular: 400;
+  --fw-medium:  500;
+  --fw-bold:    700;
+
+  /* ---- Line heights ---- */
+  --lh-tight:   1.05;
+  --lh-snug:    1.2;
+  --lh-normal:  1.5;
+  --lh-loose:   1.7;
+
+  /* ---- Tracking ---- */
+  --tracking-tight: -0.02em;
+  --tracking-normal: 0;
+  --tracking-wide:   0.08em;       /* eyebrow / labels — uppercase */
+  --tracking-xwide:  0.18em;
+
+  /* ============================================================
+     SPACING / RADIUS / SHADOW
+     Light layer to keep this file self-sufficient.
+     ============================================================ */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+  --space-7: 48px;
+  --space-8: 64px;
+  --space-9: 96px;
+
+  --radius-xs: 2px;
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 16px;
+  --radius-xl: 24px;
+  --radius-pill: 999px;
+
+  --shadow-1: 0 1px 2px rgba(17,17,17,0.06);
+  --shadow-2: 0 4px 12px rgba(17,17,17,0.08);
+  --shadow-3: 0 12px 32px rgba(17,17,17,0.12);
+  --shadow-pop: 0 24px 60px rgba(17,17,17,0.18);
+}
+
+/* =============================================================
+   SEMANTIC ELEMENT STYLES
+   Drop colors_and_type.css into a page and base elements
+   pick up FOMO defaults automatically.
+   ============================================================= */
+
+html, body {
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--font-sans);
+  font-size: var(--fs-body);
+  line-height: var(--lh-normal);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+h1, .h1 {
+  font-family: var(--font-display);
+  font-weight: var(--fw-regular);
+  font-size: var(--fs-h1);
+  line-height: var(--lh-tight);
+  letter-spacing: var(--tracking-tight);
+  color: var(--fg-1);
+  margin: 0;
+}
+
+h2, .h2 {
+  font-family: var(--font-display);
+  font-weight: var(--fw-regular);
+  font-size: var(--fs-h2);
+  line-height: var(--lh-snug);
+  letter-spacing: var(--tracking-tight);
+  color: var(--fg-1);
+  margin: 0;
+}
+
+h3, .h3 {
+  font-family: var(--font-display);
+  font-weight: var(--fw-regular);
+  font-size: var(--fs-h3);
+  line-height: var(--lh-snug);
+  color: var(--fg-1);
+  margin: 0;
+}
+
+h4, .h4 {
+  font-family: var(--font-sans);
+  font-weight: var(--fw-bold);
+  font-size: var(--fs-h4);
+  line-height: var(--lh-snug);
+  color: var(--fg-1);
+  margin: 0;
+}
+
+p, .body {
+  font-family: var(--font-sans);
+  font-weight: var(--fw-regular);
+  font-size: var(--fs-body);
+  line-height: var(--lh-normal);
+  color: var(--fg-2);
+  margin: 0;
+}
+
+.body-sm   { font-size: var(--fs-body-sm); line-height: var(--lh-normal); color: var(--fg-2); }
+.caption   { font-size: var(--fs-caption); color: var(--fg-3); }
+
+.eyebrow {
+  font-family: var(--font-sans);
+  font-weight: var(--fw-bold);
+  font-size: var(--fs-eyebrow);
+  letter-spacing: var(--tracking-xwide);
+  text-transform: uppercase;
+  color: var(--fg-1);
+}
+
+.display-1 {
+  font-family: var(--font-display);
+  font-size: var(--fs-display-1);
+  line-height: var(--lh-tight);
+  letter-spacing: var(--tracking-tight);
+}
+.display-2 {
+  font-family: var(--font-display);
+  font-size: var(--fs-display-2);
+  line-height: var(--lh-tight);
+  letter-spacing: var(--tracking-tight);
+}
+
+code, .mono {
+  font-family: var(--font-mono);
+  font-size: 0.95em;
+  background: var(--fomo-ink-50);
+  padding: 0.1em 0.35em;
+  border-radius: var(--radius-xs);
+  color: var(--fg-1);
+}
+
+a {
+  color: var(--fg-1);
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+  transition: opacity 160ms ease;
+}
+a:hover { opacity: 0.7; }
+
+hr {
+  border: 0;
+  border-top: 1px solid var(--border);
+  margin: var(--space-6) 0;
+}
