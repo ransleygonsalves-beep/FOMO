@@ -665,38 +665,7 @@ function BottomNav({ active = 'home', onChange = () => {} }) {
 }
 
 // ---- Phone status bar (custom, FOMO-styled) ----
-function StatusBar({ time = '8:47', dark = false }) {
-  const c = dark ? '#fff' : '#111';
-  return (
-    <div style={{
-      display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-      padding: '12px 28px 4px', position: 'relative', zIndex: 20,
-    }}>
-      <span style={{
-        fontFamily: '-apple-system, "SF Pro", system-ui',
-        fontWeight: 600, fontSize: 15, color: c, letterSpacing: -0.2,
-      }}>{time}</span>
-      <div style={{ display: 'flex', gap: 5, alignItems: 'center', paddingRight: 1 }}>
-        <svg width="16" height="11" viewBox="0 0 19 12">
-          <rect x="0" y="7.5" width="3.2" height="4.5" rx="0.7" fill={c}/>
-          <rect x="4.8" y="5" width="3.2" height="7" rx="0.7" fill={c}/>
-          <rect x="9.6" y="2.5" width="3.2" height="9.5" rx="0.7" fill={c}/>
-          <rect x="14.4" y="0" width="3.2" height="12" rx="0.7" fill={c}/>
-        </svg>
-        <svg width="14" height="10" viewBox="0 0 17 12">
-          <path d="M8.5 3.2C10.8 3.2 12.9 4.1 14.4 5.6L15.5 4.5C13.7 2.7 11.2 1.5 8.5 1.5C5.8 1.5 3.3 2.7 1.5 4.5L2.6 5.6C4.1 4.1 6.2 3.2 8.5 3.2Z" fill={c}/>
-          <path d="M8.5 6.8C9.9 6.8 11.1 7.3 12 8.2L13.1 7.1C11.8 5.9 10.2 5.1 8.5 5.1C6.8 5.1 5.2 5.9 3.9 7.1L5 8.2C5.9 7.3 7.1 6.8 8.5 6.8Z" fill={c}/>
-          <circle cx="8.5" cy="10.5" r="1.5" fill={c}/>
-        </svg>
-        <svg width="23" height="11" viewBox="0 0 27 13">
-          <rect x="0.5" y="0.5" width="23" height="12" rx="3.5" stroke={c} strokeOpacity="0.45" fill="none"/>
-          <rect x="2" y="2" width="18" height="9" rx="2" fill={c}/>
-          <path d="M25 4.5V8.5C25.8 8.2 26.5 7.2 26.5 6.5C26.5 5.8 25.8 4.8 25 4.5Z" fill={c} fillOpacity="0.4"/>
-        </svg>
-      </div>
-    </div>
-  );
-}
+function StatusBar() { return null; }
 
 // ---- Home indicator (mocked at bottom of phone) ----
 function HomeIndicator({ dark = false }) {
@@ -1045,7 +1014,9 @@ function RoomsScreen({ navTab: navTabProp, onNavChange } = {}) {
   const DAY_ABBR = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
   const [selectedDate, setSelectedDate] = React.useState(days[0]);
 
+  const [roomBooked, setRoomBooked] = React.useState(null);
   const closeSheet = () => { setSheetRoom(null); setSlot('09:30'); setDuration(60); setCatering(false); };
+  const confirmRoom = () => { setRoomBooked({ room: sheetRoom, date: selectedDate, slot, duration, catering }); setSheetRoom(null); };
 
   const rooms = [
     { name: 'Playa Del FOMO',  loc: 'South · 2F',   cap: 6,  vibe: 'Playful',   tone: 'beach',  tags: ['Apple TV', 'Whiteboard', 'Sun'], rate: 'Free for members' },
@@ -1347,10 +1318,52 @@ function RoomsScreen({ navTab: navTabProp, onNavChange } = {}) {
             </div>
 
             {/* ---- CTA ---- */}
-            <PrimaryButton fullWidth size="lg" style={{ marginTop: 14 }} icon="arrow_right">
+            <PrimaryButton fullWidth size="lg" style={{ marginTop: 14 }} icon="arrow_right" onClick={confirmRoom}>
               Confirm · {DAY_ABBR[selectedDate.getDay()]} {selectedDate.getDate()} · {slot}{catering ? ' · + catering' : ''}
             </PrimaryButton>
           </div>
+        </div>
+      )}
+
+      {/* ============ Room booking success overlay ============ */}
+      {roomBooked && (
+        <div style={{
+          position: 'absolute', inset: 0, background: FOMO_BG,
+          display: 'flex', flexDirection: 'column', alignItems: 'center',
+          justifyContent: 'center', zIndex: 95, padding: '0 32px',
+          textAlign: 'center',
+        }}>
+          <div style={{
+            width: 72, height: 72, borderRadius: 999,
+            background: FOMO_INK, display: 'flex', alignItems: 'center', justifyContent: 'center',
+            marginBottom: 24,
+          }}>
+            <Icon name="check" size={32} color="#fff" stroke={2} />
+          </div>
+          <Eyebrow style={{ color: FOMO_INK_2 }}>You're booked</Eyebrow>
+          <div style={{
+            fontFamily: '"DM Serif Display", serif', fontSize: 30,
+            lineHeight: 1.05, color: FOMO_INK, marginTop: 10,
+          }}>
+            <em style={{ fontStyle: 'italic' }}>{roomBooked.room}</em>
+          </div>
+          <div style={{
+            marginTop: 16, padding: '14px 20px', background: FOMO_PINK,
+            borderRadius: 14, fontSize: 13, color: FOMO_INK, lineHeight: 1.6,
+          }}>
+            <div><strong>{DAY_ABBR[roomBooked.date.getDay()]} {roomBooked.date.getDate()}</strong> · {roomBooked.slot} · {roomBooked.duration} min</div>
+            {roomBooked.catering && <div style={{ marginTop: 4, fontSize: 11, color: FOMO_INK_2 }}>+ Soi21 catering included</div>}
+          </div>
+          <div style={{ fontSize: 11.5, color: FOMO_INK_2, marginTop: 16, maxWidth: 240 }}>
+            A calendar invite has been sent to your email.
+          </div>
+          <button onClick={() => setRoomBooked(null)} style={{
+            marginTop: 28, background: FOMO_INK, color: '#fff', border: 'none',
+            borderRadius: 999, padding: '14px 32px', fontFamily: 'DM Sans, system-ui',
+            fontSize: 14, fontWeight: 600, cursor: 'pointer',
+          }}>
+            Done
+          </button>
         </div>
       )}
 
@@ -1418,6 +1431,10 @@ function Soi21Screen({ navTab: navTabProp, onNavChange } = {}) {
   const tableTaken = new Set(['12:30','19:00']);
   const [tableSheet, setTableSheet] = React.useState(false);
   const closeTableSheet = () => setTableSheet(false);
+  const [tableBooked, setTableBooked] = React.useState(null);
+  const confirmTable = () => { setTableBooked({ date: tableDate, time: tableTime, guests: tableGuests }); setTableSheet(false); };
+  const [orderSuccess, setOrderSuccess] = React.useState(false);
+  const [tabSuccess, setTabSuccess] = React.useState(false);
 
   const items = tab === 'tab' ? [] : (itemsByTab[tab] || []);
 
@@ -1439,7 +1456,13 @@ function Soi21Screen({ navTab: navTabProp, onNavChange } = {}) {
       window.removeEventListener('mouseup', up);
       window.removeEventListener('touchmove', move);
       window.removeEventListener('touchend', up);
-      setSlide(curr => (curr > 0.9 ? 1 : 0));
+      setSlide(curr => {
+        if (curr > 0.9) {
+          setTimeout(() => { setOrderSuccess(true); setCart({}); setSlide(0); setOrderExpanded(false); }, 400);
+          return 1;
+        }
+        return 0;
+      });
     };
     window.addEventListener('mousemove', move);
     window.addEventListener('mouseup', up);
@@ -1785,7 +1808,7 @@ function Soi21Screen({ navTab: navTabProp, onNavChange } = {}) {
               {' · '}{TABLE_DAY[tableDate.getDay()]} {tableDate.getDate()} {tableDate.toLocaleString('default', { month: 'short' })}
               {' · '}<strong style={{ fontWeight: 600 }}>{tableTime}</strong>
             </div>
-            <PrimaryButton fullWidth size="lg" style={{ marginTop: 12 }} icon="arrow_right">
+            <PrimaryButton fullWidth size="lg" style={{ marginTop: 12 }} icon="arrow_right" onClick={confirmTable}>
               Reserve table
             </PrimaryButton>
           </div>
@@ -1938,7 +1961,7 @@ function Soi21Screen({ navTab: navTabProp, onNavChange } = {}) {
           </div>
           {/* ---- Add to tab link ---- */}
           <div style={{ textAlign: 'center', paddingTop: 12, paddingBottom: 14 }}>
-            <button onClick={() => setNavTab('tab')} style={{
+            <button onClick={() => { setTabSuccess(true); setCart({}); setOrderExpanded(false); }} style={{
               background: 'transparent', border: 'none', cursor: 'pointer',
               fontFamily: 'DM Sans, system-ui', fontSize: 12, fontWeight: 600,
               color: FOMO_INK_2, letterSpacing: '0.04em',
@@ -1947,6 +1970,128 @@ function Soi21Screen({ navTab: navTabProp, onNavChange } = {}) {
               Add to tab instead
             </button>
           </div>
+        </div>
+      )}
+
+      {/* ============ Add to tab success overlay ============ */}
+      {tabSuccess && (
+        <div style={{
+          position: 'absolute', inset: 0, background: FOMO_BG,
+          display: 'flex', flexDirection: 'column', alignItems: 'center',
+          justifyContent: 'center', zIndex: 95, padding: '0 32px', textAlign: 'center',
+        }}>
+          <div style={{
+            width: 72, height: 72, borderRadius: 999,
+            background: FOMO_INK, display: 'flex', alignItems: 'center', justifyContent: 'center',
+            marginBottom: 24,
+          }}>
+            <Icon name="check" size={32} color="#fff" stroke={2} />
+          </div>
+          <Eyebrow style={{ color: FOMO_INK_2 }}>Added to tab</Eyebrow>
+          <div style={{
+            fontFamily: '"DM Serif Display", serif', fontSize: 30,
+            lineHeight: 1.05, color: FOMO_INK, marginTop: 10,
+          }}>
+            We'll settle up<br/><em style={{ fontStyle: 'italic' }}>at the end.</em>
+          </div>
+          <div style={{
+            marginTop: 16, padding: '14px 20px', background: FOMO_PINK,
+            borderRadius: 14, fontSize: 13, color: FOMO_INK, lineHeight: 1.6,
+          }}>
+            Items added to your running tab · Pay on checkout
+          </div>
+          <div style={{ fontSize: 11.5, color: FOMO_INK_2, marginTop: 16, maxWidth: 240 }}>
+            View your tab anytime from the Soi21 screen.
+          </div>
+          <button onClick={() => { setTabSuccess(false); setTab('tab'); }} style={{
+            marginTop: 28, background: FOMO_INK, color: '#fff', border: 'none',
+            borderRadius: 999, padding: '14px 32px', fontFamily: 'DM Sans, system-ui',
+            fontSize: 14, fontWeight: 600, cursor: 'pointer',
+          }}>
+            View tab
+          </button>
+        </div>
+      )}
+
+      {/* ============ Order success overlay ============ */}
+      {orderSuccess && (
+        <div style={{
+          position: 'absolute', inset: 0, background: FOMO_BG,
+          display: 'flex', flexDirection: 'column', alignItems: 'center',
+          justifyContent: 'center', zIndex: 95, padding: '0 32px', textAlign: 'center',
+        }}>
+          <div style={{
+            width: 72, height: 72, borderRadius: 999,
+            background: FOMO_INK, display: 'flex', alignItems: 'center', justifyContent: 'center',
+            marginBottom: 24,
+          }}>
+            <Icon name="check" size={32} color="#fff" stroke={2} />
+          </div>
+          <Eyebrow style={{ color: FOMO_INK_2 }}>Order placed</Eyebrow>
+          <div style={{
+            fontFamily: '"DM Serif Display", serif', fontSize: 30,
+            lineHeight: 1.05, color: FOMO_INK, marginTop: 10,
+          }}>
+            Enjoy your<br/><em style={{ fontStyle: 'italic', color: FOMO_INK }}>meal!</em>
+          </div>
+          <div style={{
+            marginTop: 16, padding: '14px 20px', background: FOMO_PINK,
+            borderRadius: 14, fontSize: 13, color: FOMO_INK, lineHeight: 1.6,
+          }}>
+            Paid via <strong>Vipps</strong> · Ready in ~15 min
+          </div>
+          <div style={{ fontSize: 11.5, color: FOMO_INK_2, marginTop: 16, maxWidth: 240 }}>
+            You'll get a push notification when your order is ready for pickup.
+          </div>
+          <button onClick={() => setOrderSuccess(false)} style={{
+            marginTop: 28, background: FOMO_INK, color: '#fff', border: 'none',
+            borderRadius: 999, padding: '14px 32px', fontFamily: 'DM Sans, system-ui',
+            fontSize: 14, fontWeight: 600, cursor: 'pointer',
+          }}>
+            Done
+          </button>
+        </div>
+      )}
+
+      {/* ============ Table booking success overlay ============ */}
+      {tableBooked && (
+        <div style={{
+          position: 'absolute', inset: 0, background: FOMO_BG,
+          display: 'flex', flexDirection: 'column', alignItems: 'center',
+          justifyContent: 'center', zIndex: 95, padding: '0 32px', textAlign: 'center',
+        }}>
+          <div style={{
+            width: 72, height: 72, borderRadius: 999,
+            background: FOMO_INK, display: 'flex', alignItems: 'center', justifyContent: 'center',
+            marginBottom: 24,
+          }}>
+            <Icon name="check" size={32} color="#fff" stroke={2} />
+          </div>
+          <Eyebrow style={{ color: FOMO_INK_2 }}>Table reserved</Eyebrow>
+          <div style={{
+            fontFamily: '"DM Serif Display", serif', fontSize: 30,
+            lineHeight: 1.05, color: FOMO_INK, marginTop: 10,
+          }}>
+            See you at<br/><em style={{ fontStyle: 'italic' }}>Soi21.</em>
+          </div>
+          <div style={{
+            marginTop: 16, padding: '14px 20px', background: FOMO_PINK,
+            borderRadius: 14, fontSize: 13, color: FOMO_INK, lineHeight: 1.6,
+          }}>
+            <strong>{tableBooked.guests} {tableBooked.guests === 1 ? 'guest' : 'guests'}</strong>
+            {' · '}{TABLE_DAY[tableBooked.date.getDay()]} {tableBooked.date.getDate()} {tableBooked.date.toLocaleString('default', { month: 'short' })}
+            {' · '}<strong>{tableBooked.time}</strong>
+          </div>
+          <div style={{ fontSize: 11.5, color: FOMO_INK_2, marginTop: 16, maxWidth: 240 }}>
+            A confirmation has been sent to your email.
+          </div>
+          <button onClick={() => setTableBooked(null)} style={{
+            marginTop: 28, background: FOMO_INK, color: '#fff', border: 'none',
+            borderRadius: 999, padding: '14px 32px', fontFamily: 'DM Sans, system-ui',
+            fontSize: 14, fontWeight: 600, cursor: 'pointer',
+          }}>
+            Done
+          </button>
         </div>
       )}
 
@@ -1966,6 +2111,7 @@ function SupportScreen({ navTab: navTabProp, onNavChange } = {}) {
   const [_navLocal, _setNavLocal] = React.useState('support');
   const navTab = navTabProp !== undefined ? navTabProp : _navLocal;
   const setNavTab = onNavChange || _setNavLocal;
+  const [supportSuccess, setSupportSuccess] = React.useState(false);
   const [category, setCategory] = React.useState('it');
   const [building, setBuilding] = React.useState('West');
   const [office, setOffice] = React.useState('3F · Studio 304');
@@ -2214,7 +2360,7 @@ function SupportScreen({ navTab: navTabProp, onNavChange } = {}) {
 
         {/* ============ Submit ============ */}
         <div style={{ padding: '14px 22px 0' }}>
-          <PrimaryButton fullWidth size="lg" icon="arrow_right">
+          <PrimaryButton fullWidth size="lg" icon="arrow_right" onClick={() => setSupportSuccess(true)}>
             Submit ticket to community team
           </PrimaryButton>
           <div style={{
@@ -2225,6 +2371,46 @@ function SupportScreen({ navTab: navTabProp, onNavChange } = {}) {
           </div>
         </div>
       </div>
+
+      {/* ============ Support success overlay ============ */}
+      {supportSuccess && (
+        <div style={{
+          position: 'absolute', inset: 0, background: FOMO_BG,
+          display: 'flex', flexDirection: 'column', alignItems: 'center',
+          justifyContent: 'center', zIndex: 95, padding: '0 32px', textAlign: 'center',
+        }}>
+          <div style={{
+            width: 72, height: 72, borderRadius: 999,
+            background: FOMO_INK, display: 'flex', alignItems: 'center', justifyContent: 'center',
+            marginBottom: 24,
+          }}>
+            <Icon name="check" size={32} color="#fff" stroke={2} />
+          </div>
+          <Eyebrow style={{ color: FOMO_INK_2 }}>Ticket submitted</Eyebrow>
+          <div style={{
+            fontFamily: '"DM Serif Display", serif', fontSize: 30,
+            lineHeight: 1.05, color: FOMO_INK, marginTop: 10,
+          }}>
+            We're on it,<br/><em style={{ fontStyle: 'italic' }}>hold tight.</em>
+          </div>
+          <div style={{
+            marginTop: 16, padding: '14px 20px', background: FOMO_PINK,
+            borderRadius: 14, fontSize: 13, color: FOMO_INK, lineHeight: 1.6,
+          }}>
+            <strong>{categories.find(c => c.id === category)?.label}</strong> · {building} · {office}
+          </div>
+          <div style={{ fontSize: 11.5, color: FOMO_INK_2, marginTop: 16, maxWidth: 240 }}>
+            Average response is 8 minutes during campus hours. You'll get a Slack DM when we pick it up.
+          </div>
+          <button onClick={() => setSupportSuccess(false)} style={{
+            marginTop: 28, background: FOMO_INK, color: '#fff', border: 'none',
+            borderRadius: 999, padding: '14px 32px', fontFamily: 'DM Sans, system-ui',
+            fontSize: 14, fontWeight: 600, cursor: 'pointer',
+          }}>
+            Done
+          </button>
+        </div>
+      )}
 
       {!onNavChange && <BottomNav active={navTab} onChange={setNavTab} />}
       {!onNavChange && <HomeIndicator />}

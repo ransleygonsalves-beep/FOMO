@@ -15,7 +15,7 @@ All changes go into `index.html`. The file is structured in this order:
 3. `<script type="text/plain" id="app-code">` — all JSX:
    - Design tokens (`FOMO_INK`, `FOMO_PINK`, etc.)
    - Icon data (`_ICN` object) + `Icon` component
-   - Shared UI components (`Screen`, `StatusBar`, `BottomNav`, `Pill`, etc.)
+   - Shared UI components (`Screen`, `BottomNav`, `Pill`, etc.) — `StatusBar` returns null (hidden)
    - Screen components: `HomeScreen`, `RoomsScreen`, `Soi21Screen`, `SupportScreen`, `CommunityScreen`
    - Root `App` component
 4. Babel compiler script that reads `app-code` and executes it
@@ -33,6 +33,17 @@ To add a new icon, add an entry to `_ICN`. To replace an existing icon, update i
 
 Pattern: backdrop at `zIndex: 89`, sheet at `bottom: 84px; zIndex: 90` (sits above BottomNav which is `bottom: 0; zIndex: 100`). Close button should be `position: absolute; top: 14; right: 14`.
 
+## Success Screens
+
+Each journey that completes has a full-screen success overlay (`position: absolute; inset: 0; zIndex: 95`). Pattern:
+- Dark circle with checkmark icon at top
+- Eyebrow label + DM Serif Display headline
+- FOMO_PINK summary card with key details
+- Supporting text
+- Done / action button that dismisses the overlay
+
+Journeys with success screens: book meeting room (`roomBooked`), order food (`orderSuccess`), add to tab (`tabSuccess`), book table (`tableBooked`), submit support ticket (`supportSuccess`).
+
 ## Scroll Padding
 
 When a sticky cart bar or bottom sheet is visible, increase `paddingBottom` on the scrollable container so the last items are not hidden. Current values in Soi21Screen: `cartCount > 0 ? (orderExpanded ? 510 : 270) : 90`.
@@ -40,6 +51,12 @@ When a sticky cart bar or bottom sheet is visible, increase `paddingBottom` on t
 ## Navigation
 
 The `App` component manages `navTab` state and passes `{ navTab, onNavChange }` props to each screen. To navigate programmatically from within a screen, call `onNavChange('tab-id')` or the local `setNavTab`. Tab IDs: `home`, `bookings`, `food`, `support`, `community`.
+
+Quick action cards on the Home screen use the `nav` field on each action object to trigger navigation via `setNavTab(a.nav)`.
+
+## Meeting Room Filter
+
+The location filter (All / South / West / East / North) works by filtering `rooms` array: `rooms.filter(r => location === 'All' || r.loc.startsWith(location))`. Room `loc` values are formatted as `'Building · Floor'` (e.g. `'South · 2F'`).
 
 ## Design Language
 

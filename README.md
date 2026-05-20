@@ -11,10 +11,28 @@ FOMO Campus is a single-file React prototype (`index.html`) that simulates the m
 | Screen | Nav Tab | Description |
 |--------|---------|-------------|
 | Home | Home | Greeting, campus pass NFC card, events carousel, quick actions, My Day |
-| Meeting | Meeting | Themed meeting room browser with date/time booking sheet |
-| Soi21 | Soi21 | Food & bar ordering, tab management, table booking |
-| Support | Support | Campus support ticket form (category, location, description) |
+| Meeting | Meeting | Themed meeting room browser with location filter, date/time booking sheet, success screen |
+| Soi21 | Soi21 | Food & bar ordering, table booking, expandable cart, slide-to-pay, add to tab — all with success screens |
+| Support | Support | Campus support ticket form (category, location, description) with success screen |
 | Community | Community | Coming soon placeholder |
+
+## User Journeys with Success Screens
+
+| Journey | Trigger | Success message |
+|---------|---------|-----------------|
+| Book a meeting room | Confirm button in booking sheet | "You're booked" — room, date, time, catering |
+| Order food | Slide to pay via Vipps | "Enjoy your meal!" — ready in ~15 min |
+| Add to tab | "Add to tab instead" link | "We'll settle up at the end" |
+| Book a table | Reserve table button | "See you at Soi21" — guests, date, time |
+| Submit support ticket | Submit button | "We're on it, hold tight" — category, location |
+
+## Quick Actions (Home screen)
+
+All four quick action cards navigate directly to the relevant screen:
+- **Book a Room** → Meeting
+- **Order from Soi21** → Soi21
+- **Raise a Request** → Support
+- **Gym & Wellness** → Community
 
 ## Tech Stack
 
