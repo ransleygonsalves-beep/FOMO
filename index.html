@@ -1,0 +1,2401 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>FOMO Campus</title>
+  <script src="libs/react.js"></script>
+  <script src="libs/react-dom.js"></script>
+  <script src="libs/babel.min.js"></script>
+  <style>
+    html, body { margin:0; padding:0; height:100%; overflow:hidden; }
+    #root { height:100%; }
+    * { box-sizing:border-box; }
+/* =============================================================
+   FOMO Design System — Tokens
+   Colors and Typography
+   -----------------------------------------------------------
+   Source: FOMO Brand Guidelines (Color Palette + Primary
+   Typography sheets). Primary palette is Black / White /
+   Flamingo Pink / Beige (warm cream). Secondary palette adds
+   muted greens that nod to the tropical-foliage motif.
+   ============================================================= */
+
+/* ---- Webfonts ----
+   DM Serif Display + DM Sans served locally from licensed brand TTFs in fonts/.
+   DM Sans uses a variable TTF (upright) and a separate italic variable TTF. */
+@font-face {
+  font-family: "DM Serif Display";
+  src: url("fomo/fonts/DMSerifDisplay-Regular.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "DM Serif Display";
+  src: url("fomo/fonts/DMSerifDisplay-Italic.ttf") format("truetype");
+  font-weight: 400;
+  font-style: italic;
+  font-display: swap;
+}
+@font-face {
+  font-family: "DM Sans";
+  src: url("fomo/fonts/DMSans-VariableFont_opsz_wght.ttf") format("truetype-variations");
+  font-weight: 100 1000;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "DM Sans";
+  src: url("fomo/fonts/DMSans-Italic-VariableFont_opsz_wght.ttf") format("truetype-variations");
+  font-weight: 100 1000;
+  font-style: italic;
+  font-display: swap;
+}
+
+:root {
+  /* ============================================================
+     COLOR — PRIMARY PALETTE
+     Black, White, Flamingo Pink, Beige (warm cream)
+     ============================================================ */
+  --fomo-black: #111111;            /* Pantone Black 6 C */
+  --fomo-white: #ffffff;            /* Pantone White / 11-0601 TCX */
+  --fomo-pink:  #fcc9ca;            /* Pantone 700 C — Flamingo Pink */
+  --fomo-beige: #f9f4e8;            /* Pantone 9183 C — warm cream */
+
+  /* ---- Pink scale (derived from Flamingo Pink) ----
+     Useful for tints, hover/press states, soft fills. */
+  --fomo-pink-50:  #fff5f5;
+  --fomo-pink-100: #ffe5e6;
+  --fomo-pink-200: #fcc9ca;          /* base */
+  --fomo-pink-300: #f7adaf;
+  --fomo-pink-400: #ec8b8e;
+  --fomo-pink-500: #d96f72;          /* deepened, button-press */
+  --fomo-pink-600: #b85356;
+
+  /* ---- Beige / Cream scale ---- */
+  --fomo-beige-50:  #fefcf6;
+  --fomo-beige-100: #f9f4e8;         /* base */
+  --fomo-beige-200: #f1eada;
+  --fomo-beige-300: #e6dcc4;
+
+  /* ---- Black / Neutral scale ----
+     Anchored to Pantone Black 6 C, then warmed slightly. */
+  --fomo-ink-900: #111111;           /* base black */
+  --fomo-ink-800: #1f1f1f;
+  --fomo-ink-700: #333333;
+  --fomo-ink-500: #5b5b5b;
+  --fomo-ink-400: #8a8a8a;
+  --fomo-ink-300: #b8b8b8;
+  --fomo-ink-200: #dcdcdc;
+  --fomo-ink-100: #ececec;
+  --fomo-ink-50:  #f6f6f6;
+
+  /* ============================================================
+     COLOR — SECONDARY PALETTE
+     Tropical foliage greens, used sparingly as accents.
+     ============================================================ */
+  --fomo-green-light: #eaf4df;
+  --fomo-green-dark:  #738c70;
+
+  /* ============================================================
+     SEMANTIC TOKENS
+     Use these in product surfaces; refer to primitives above
+     only when defining new components.
+     ============================================================ */
+
+  /* Surfaces */
+  --bg:           var(--fomo-beige);     /* default page background — warm cream */
+  --bg-alt:       var(--fomo-beige-50);  /* lifted surface, modal bg */
+  --bg-inverse:   var(--fomo-black);     /* black panels, hero blocks */
+  --bg-accent:    var(--fomo-pink);      /* pink hero / promo blocks */
+  --bg-soft:      var(--fomo-pink-50);   /* very soft pink wash */
+  --bg-leaf:      var(--fomo-green-light); /* leafy section background */
+
+  /* Foreground / text */
+  --fg:           var(--fomo-ink-900);   /* primary text */
+  --fg-1:         var(--fomo-ink-900);   /* alias */
+  --fg-2:         var(--fomo-ink-700);   /* body text */
+  --fg-3:         var(--fomo-ink-500);   /* secondary / captions */
+  --fg-4:         var(--fomo-ink-400);   /* tertiary / disabled */
+  --fg-on-dark:   var(--fomo-white);
+  --fg-on-pink:   var(--fomo-black);
+  --fg-on-beige:  var(--fomo-black);
+  --fg-accent:    var(--fomo-green-dark);
+
+  /* Borders & dividers */
+  --border:        var(--fomo-ink-200);
+  --border-strong: var(--fomo-ink-900);
+  --hairline:      var(--fomo-ink-100);
+
+  /* Brand actions */
+  --brand:         var(--fomo-black);    /* primary CTA */
+  --brand-hover:   var(--fomo-ink-800);
+  --brand-press:   var(--fomo-ink-700);
+  --brand-soft:    var(--fomo-pink);
+  --brand-soft-hover: var(--fomo-pink-300);
+
+  /* Status (kept on-brand: soft, warm) */
+  --success:       #6f8f6c;              /* echoes secondary green */
+  --warning:       #c98a3a;
+  --danger:        #b85356;              /* deepened flamingo */
+  --info:          #5b6e7a;
+
+  /* ============================================================
+     TYPOGRAPHY — FAMILIES
+     Brand uses DM Serif Display for headlines, DM Sans for
+     copy. No mono spec in source — using DM Mono fallback.
+     ============================================================ */
+  --font-display: "DM Serif Display", "Playfair Display", Georgia, serif;
+  --font-sans:    "DM Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --font-mono:    "DM Mono", ui-monospace, "SF Mono", Menlo, monospace;
+
+  /* ---- Type scale (display-leaning, brand book style) ---- */
+  --fs-display-1: clamp(56px, 7vw, 96px);
+  --fs-display-2: clamp(40px, 5vw, 72px);
+  --fs-h1:        clamp(36px, 4vw, 56px);
+  --fs-h2:        clamp(28px, 3vw, 40px);
+  --fs-h3:        24px;
+  --fs-h4:        20px;
+  --fs-body:      16px;
+  --fs-body-sm:   14px;
+  --fs-caption:   12px;
+  --fs-eyebrow:   12px;
+
+  /* ---- Weights ---- */
+  --fw-regular: 400;
+  --fw-medium:  500;
+  --fw-bold:    700;
+
+  /* ---- Line heights ---- */
+  --lh-tight:   1.05;
+  --lh-snug:    1.2;
+  --lh-normal:  1.5;
+  --lh-loose:   1.7;
+
+  /* ---- Tracking ---- */
+  --tracking-tight: -0.02em;
+  --tracking-normal: 0;
+  --tracking-wide:   0.08em;       /* eyebrow / labels — uppercase */
+  --tracking-xwide:  0.18em;
+
+  /* ============================================================
+     SPACING / RADIUS / SHADOW
+     Light layer to keep this file self-sufficient.
+     ============================================================ */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+  --space-7: 48px;
+  --space-8: 64px;
+  --space-9: 96px;
+
+  --radius-xs: 2px;
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 16px;
+  --radius-xl: 24px;
+  --radius-pill: 999px;
+
+  --shadow-1: 0 1px 2px rgba(17,17,17,0.06);
+  --shadow-2: 0 4px 12px rgba(17,17,17,0.08);
+  --shadow-3: 0 12px 32px rgba(17,17,17,0.12);
+  --shadow-pop: 0 24px 60px rgba(17,17,17,0.18);
+}
+
+/* =============================================================
+   SEMANTIC ELEMENT STYLES
+   Drop colors_and_type.css into a page and base elements
+   pick up FOMO defaults automatically.
+   ============================================================= */
+
+html, body {
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--font-sans);
+  font-size: var(--fs-body);
+  line-height: var(--lh-normal);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+h1, .h1 {
+  font-family: var(--font-display);
+  font-weight: var(--fw-regular);
+  font-size: var(--fs-h1);
+  line-height: var(--lh-tight);
+  letter-spacing: var(--tracking-tight);
+  color: var(--fg-1);
+  margin: 0;
+}
+
+h2, .h2 {
+  font-family: var(--font-display);
+  font-weight: var(--fw-regular);
+  font-size: var(--fs-h2);
+  line-height: var(--lh-snug);
+  letter-spacing: var(--tracking-tight);
+  color: var(--fg-1);
+  margin: 0;
+}
+
+h3, .h3 {
+  font-family: var(--font-display);
+  font-weight: var(--fw-regular);
+  font-size: var(--fs-h3);
+  line-height: var(--lh-snug);
+  color: var(--fg-1);
+  margin: 0;
+}
+
+h4, .h4 {
+  font-family: var(--font-sans);
+  font-weight: var(--fw-bold);
+  font-size: var(--fs-h4);
+  line-height: var(--lh-snug);
+  color: var(--fg-1);
+  margin: 0;
+}
+
+p, .body {
+  font-family: var(--font-sans);
+  font-weight: var(--fw-regular);
+  font-size: var(--fs-body);
+  line-height: var(--lh-normal);
+  color: var(--fg-2);
+  margin: 0;
+}
+
+.body-sm   { font-size: var(--fs-body-sm); line-height: var(--lh-normal); color: var(--fg-2); }
+.caption   { font-size: var(--fs-caption); color: var(--fg-3); }
+
+.eyebrow {
+  font-family: var(--font-sans);
+  font-weight: var(--fw-bold);
+  font-size: var(--fs-eyebrow);
+  letter-spacing: var(--tracking-xwide);
+  text-transform: uppercase;
+  color: var(--fg-1);
+}
+
+.display-1 {
+  font-family: var(--font-display);
+  font-size: var(--fs-display-1);
+  line-height: var(--lh-tight);
+  letter-spacing: var(--tracking-tight);
+}
+.display-2 {
+  font-family: var(--font-display);
+  font-size: var(--fs-display-2);
+  line-height: var(--lh-tight);
+  letter-spacing: var(--tracking-tight);
+}
+
+code, .mono {
+  font-family: var(--font-mono);
+  font-size: 0.95em;
+  background: var(--fomo-ink-50);
+  padding: 0.1em 0.35em;
+  border-radius: var(--radius-xs);
+  color: var(--fg-1);
+}
+
+a {
+  color: var(--fg-1);
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+  transition: opacity 160ms ease;
+}
+a:hover { opacity: 0.7; }
+
+hr {
+  border: 0;
+  border-top: 1px solid var(--border);
+  margin: var(--space-6) 0;
+}
+  </style>
+</head>
+<body>
+<div id="root" style="height:100%"></div>
+<div id="err" style="display:none;position:fixed;inset:0;background:#fff;color:red;padding:20px;font:14px monospace;z-index:9999;white-space:pre-wrap;overflow:auto"></div>
+
+<script>
+window.onerror = function(msg, src, line, col, err) {
+  var d = document.getElementById('err');
+  d.style.display = 'block';
+  d.textContent = 'JS ERROR:\n' + msg + '\n\nSource: ' + src + ':' + line + ':' + col + '\n\n' + (err && err.stack ? err.stack : '');
+  return false;
+};
+window.addEventListener('unhandledrejection', function(e) {
+  var d = document.getElementById('err');
+  d.style.display = 'block';
+  d.textContent += '\nPROMISE ERROR:\n' + (e.reason && e.reason.stack ? e.reason.stack : e.reason);
+});
+</script>
+
+<script type="text/plain" id="app-code">
+// Shared UI primitives for FOMO Campus mobile app.
+// Mobile-tuned overrides on top of the FOMO design system (colors_and_type.css).
+
+const FOMO_BG = '#f9f4e8';
+const FOMO_INK = '#111111';
+const FOMO_PINK = '#fcc9ca';
+const FOMO_PINK_SOFT = '#fff5f5';
+const FOMO_INK_2 = '#5b5b5b';
+const FOMO_BORDER = '#e6dcc4';      // beige-300 — softer than ink-200 on cream
+const FOMO_HAIRLINE = '#1a1a1a';    // editorial hairline
+const FOMO_GREEN = '#738c70';
+const FOMO_GREEN_LIGHT = '#eaf4df';
+
+// ---- Icon ---- (Iconsax Linear paths — fully inlined, no CDN)
+const _ICN = {
+  bell:["M12.02 2.91c-3.31 0-6 2.69-6 6v2.89c0 .61-.26 1.54-.57 2.06L4.3 15.77c-.71 1.18-.22 2.49 1.08 2.93 4.31 1.44 8.96 1.44 13.27 0 1.21-.4 1.74-1.83 1.08-2.93l-1.15-1.91c-.3-.52-.56-1.45-.56-2.06V8.91c0-3.3-2.7-6-6-6Z","M13.87 3.2a6.754 6.754 0 0 0-3.7 0c.29-.74 1.01-1.26 1.85-1.26.84 0 1.56.52 1.85 1.26Z","M15.02 19.06c0 1.65-1.35 3-3 3-.82 0-1.58-.34-2.12-.88a3.01 3.01 0 0 1-.88-2.12"],
+  scan:{vb:'0 0 256 256',d:"M128,24A104,104,0,1,0,232,128,104.11,104.11,0,0,0,128,24Zm0,192a88,88,0,1,1,88-88A88.1,88.1,0,0,1,128,216ZM97.07,100.26a59.33,59.33,0,0,1,0,55.48,8,8,0,1,1-14.14-7.48,42.79,42.79,0,0,0,0-40.52,8,8,0,0,1,14.14-7.48Zm56-32a126.67,126.67,0,0,1,0,119.54A8,8,0,0,1,139,180.23a110.62,110.62,0,0,0,0-104.46,8,8,0,0,1,14.12-7.54Zm-28,16a93,93,0,0,1,0,87.52,8,8,0,1,1-14.12-7.52,77,77,0,0,0,0-72.48,8,8,0,1,1,14.12-7.52Z"},
+  arrow_right:["M14.43 5.93L20.5 12l-6.07 6.07M3.5 12h16.83"],
+  arrow_up_right:["M8.91 19.92l6.52-6.52c.77-.77.77-2.03 0-2.8L8.91 4.08"],
+  chevron_right:["M8.91 19.92l6.52-6.52c.77-.77.77-2.03 0-2.8L8.91 4.08"],
+  chevron_down:["M19.92 8.95l-6.52 6.52c-.77.77-2.03.77-2.8 0L4.08 8.95"],
+  chevron_left:["M15 19.92L8.48 13.4c-.77-.77-.77-2.03 0-2.8L15 4.08"],
+  plus:["M6 12h12M12 18V6"],
+  minus:["M6 12h12"],
+  filter:["M5.4 2.1h13.2c1.1 0 2 .9 2 2v2.2c0 .8-.5 1.8-1 2.3l-4.3 3.8c-.6.5-1 1.5-1 2.3V19c0 .6-.4 1.4-.9 1.7l-1.4.9c-1.3.8-3.1-.1-3.1-1.7v-5.3c0-.7-.4-1.6-.8-2.1l-3.8-4c-.5-.5-.9-1.4-.9-2V4.2c0-1.2.9-2.1 2-2.1ZM10.93 2.1 6 10"],
+  search:["M11.5 21a9.5 9.5 0 1 0 0-19 9.5 9.5 0 0 0 0 19ZM22 22l-2-2"],
+  clock:["M22 12c0 5.52-4.48 10-10 10S2 17.52 2 12 6.48 2 12 2s10 4.48 10 10Z","m15.71 15.18-3.1-1.85c-.54-.32-.98-1.09-.98-1.72v-4.1"],
+  home:["m9.02 2.84-5.39 4.2C2.73 7.74 2 9.23 2 10.36v7.41c0 2.32 1.89 4.22 4.21 4.22h11.58c2.32 0 4.21-1.9 4.21-4.21V10.5c0-1.21-.81-2.76-1.8-3.45l-6.18-4.33c-1.4-.98-3.65-.93-5 .12ZM12 17.99v-3"],
+  calendar:["M8 2v3M16 2v3M3.5 9.09h17M21 8.5V17c0 3-1.5 5-5 5H8c-3.5 0-5-2-5-5V8.5c0-3 1.5-5 5-5h8c3.5 0 5 2 5 5Z","M15.695 13.7h.009M15.695 16.7h.009M11.995 13.7h.01M11.995 16.7h.01M8.294 13.7h.01M8.294 16.7h.01"],
+  receipt:["M7.242 2h9.515C18.899 2 21 4.101 21 6.242V21l-2.894-2.182L15.909 21l-2.197-2.182L11.515 21l-2.197-2.182L7.121 21l-2.197-2.182L2 21V6.242C2 4.101 4.101 2 6.242 2h1ZM7 7h10M7 11.5h10M7 16h5"],
+  utensils:{vb:'0 0 256 256',d:"M72,88V40a8,8,0,0,1,16,0V88a8,8,0,0,1-16,0ZM216,40V224a8,8,0,0,1-16,0V176H152a8,8,0,0,1-8-8,268.75,268.75,0,0,1,7.22-56.88c9.78-40.49,28.32-67.63,53.63-78.47A8,8,0,0,1,216,40ZM200,53.9c-32.17,24.57-38.47,84.42-39.7,106.1H200ZM119.89,38.69a8,8,0,1,0-15.78,2.63L112,88.63a32,32,0,0,1-64,0l7.88-47.31a8,8,0,1,0-15.78-2.63l-8,48A8.17,8.17,0,0,0,32,88a48.07,48.07,0,0,0,40,47.32V224a8,8,0,0,0,16,0V135.32A48.07,48.07,0,0,0,128,88a8.17,8.17,0,0,0-.11-1.31Z"},
+  croissant:{vb:'0 0 256 256',d:"M72,88V40a8,8,0,0,1,16,0V88a8,8,0,0,1-16,0ZM216,40V224a8,8,0,0,1-16,0V176H152a8,8,0,0,1-8-8,268.75,268.75,0,0,1,7.22-56.88c9.78-40.49,28.32-67.63,53.63-78.47A8,8,0,0,1,216,40ZM200,53.9c-32.17,24.57-38.47,84.42-39.7,106.1H200ZM119.89,38.69a8,8,0,1,0-15.78,2.63L112,88.63a32,32,0,0,1-64,0l7.88-47.31a8,8,0,1,0-15.78-2.63l-8,48A8.17,8.17,0,0,0,32,88a48.07,48.07,0,0,0,40,47.32V224a8,8,0,0,0,16,0V135.32A48.07,48.07,0,0,0,128,88a8.17,8.17,0,0,0-.11-1.31Z"},
+  coffee:{vb:'0 0 256 256',d:"M72,88V40a8,8,0,0,1,16,0V88a8,8,0,0,1-16,0ZM216,40V224a8,8,0,0,1-16,0V176H152a8,8,0,0,1-8-8,268.75,268.75,0,0,1,7.22-56.88c9.78-40.49,28.32-67.63,53.63-78.47A8,8,0,0,1,216,40ZM200,53.9c-32.17,24.57-38.47,84.42-39.7,106.1H200ZM119.89,38.69a8,8,0,1,0-15.78,2.63L112,88.63a32,32,0,0,1-64,0l7.88-47.31a8,8,0,1,0-15.78-2.63l-8,48A8.17,8.17,0,0,0,32,88a48.07,48.07,0,0,0,40,47.32V224a8,8,0,0,0,16,0V135.32A48.07,48.07,0,0,0,128,88a8.17,8.17,0,0,0-.11-1.31Z"},
+  wine:{vb:'0 0 256 256',d:"M72,88V40a8,8,0,0,1,16,0V88a8,8,0,0,1-16,0ZM216,40V224a8,8,0,0,1-16,0V176H152a8,8,0,0,1-8-8,268.75,268.75,0,0,1,7.22-56.88c9.78-40.49,28.32-67.63,53.63-78.47A8,8,0,0,1,216,40ZM200,53.9c-32.17,24.57-38.47,84.42-39.7,106.1H200ZM119.89,38.69a8,8,0,1,0-15.78,2.63L112,88.63a32,32,0,0,1-64,0l7.88-47.31a8,8,0,1,0-15.78-2.63l-8,48A8.17,8.17,0,0,0,32,88a48.07,48.07,0,0,0,40,47.32V224a8,8,0,0,0,16,0V135.32A48.07,48.07,0,0,0,128,88a8.17,8.17,0,0,0-.11-1.31Z"},
+  fish:["M4.26 11.02v4.97c0 1.82 0 1.82 1.72 2.98l4.73 2.73c.71.41 1.87.41 2.58 0l4.73-2.73c1.72-1.16 1.72-1.16 1.72-2.98v-4.97c0-1.82 0-1.82-1.72-2.98l-4.73-2.73c-.71-.41-1.87-.41-2.58 0L5.98 8.04C4.26 9.2 4.26 9.2 4.26 11.02Z","M17.5 7.63V5c0-2-1-3-3-3h-5c-2 0-3 1-3 3v2.56"],
+  message:["M16 2H8C4 2 2 4 2 8v13c0 .55.45 1 1 1h13c4 0 6-2 6-6V8c0-4-2-6-6-6Z","M7 9.5h10M7 14.5h7"],
+  life_buoy:{vb:'0 0 24 24',d:"M11.97 22.75C6.04997 22.75 1.21997 17.93 1.21997 12C1.21997 6.07 6.04997 1.25 11.97 1.25C17.89 1.25 22.72 6.07 22.72 12C22.72 17.93 17.9 22.75 11.97 22.75ZM11.97 2.75C6.86997 2.75 2.71997 6.9 2.71997 12C2.71997 17.1 6.86997 21.25 11.97 21.25C17.07 21.25 21.22 17.1 21.22 12C21.22 6.9 17.07 2.75 11.97 2.75Z M12 17.25C9.1 17.25 6.75 14.89 6.75 12C6.75 9.11 9.1 6.75 12 6.75C14.9 6.75 17.25 9.11 17.25 12C17.25 14.89 14.9 17.25 12 17.25ZM12 8.25C9.93 8.25 8.25 9.93 8.25 12C8.25 14.07 9.93 15.75 12 15.75C14.07 15.75 15.75 14.07 15.75 12C15.75 9.93 14.07 8.25 12 8.25Z M8.44009 9.20914C8.25009 9.20914 8.05009 9.13914 7.91009 8.99914L4.37009 5.45914C4.08009 5.16914 4.08009 4.68914 4.37009 4.39914C4.66009 4.10914 5.14009 4.10914 5.43009 4.39914L8.97009 7.93914C9.26009 8.22914 9.26009 8.69914 8.97009 8.99914C8.82009 9.13914 8.63009 9.20914 8.44009 9.20914Z M4.90009 19.8207C4.71009 19.8207 4.52009 19.7507 4.37009 19.6007C4.08009 19.3107 4.08009 18.8307 4.37009 18.5407L7.91009 15.0007C8.20009 14.7107 8.68009 14.7107 8.97009 15.0007C9.26009 15.2907 9.26009 15.7707 8.97009 16.0607L5.43009 19.6007C5.29009 19.7507 5.09009 19.8207 4.90009 19.8207Z M19.0399 19.8207C18.8499 19.8207 18.6599 19.7507 18.5099 19.6007L14.9699 16.0607C14.6799 15.7707 14.6799 15.2907 14.9699 15.0007C15.2599 14.7107 15.7399 14.7107 16.0299 15.0007L19.5699 18.5407C19.8599 18.8307 19.8599 19.3107 19.5699 19.6007C19.4299 19.7507 19.2399 19.8207 19.0399 19.8207Z M15.51 9.20938C15.32 9.20938 15.13 9.13938 14.98 8.98938C14.69 8.69938 14.69 8.21938 14.98 7.92937L18.52 4.38938C18.81 4.09938 19.29 4.09938 19.58 4.38938C19.87 4.67937 19.87 5.15937 19.58 5.44937L16.04 8.99938C15.89 9.13938 15.7 9.20938 15.51 9.20938Z"},
+  help_circle:["M12 22c5.5 0 10-4.5 10-10S17.5 2 12 2 2 6.5 2 12s4.5 10 10 10ZM12 8v5","M11.995 16h.009"],
+  map_pin:["M12 13.43a3.12 3.12 0 1 0 0-6.24 3.12 3.12 0 0 0 0 6.24Z","M3.62 8.49c1.97-8.66 14.8-8.65 16.76.01 1.15 5.08-2.01 9.38-4.78 12.04a5.193 5.193 0 0 1-7.21 0c-2.76-2.66-5.92-6.97-4.77-12.05Z"],
+  users:["M18 7.16a.605.605 0 0 0-.19 0 2.573 2.573 0 0 1-2.48-2.58c0-1.43 1.15-2.58 2.58-2.58a2.58 2.58 0 0 1 2.58 2.58A2.589 2.589 0 0 1 18 7.16ZM16.97 14.44c1.37.23 2.88-.01 3.94-.72 1.41-.94 1.41-2.48 0-3.42-1.07-.71-2.6-.95-3.97-.71M5.97 7.16c.06-.01.13-.01.19 0a2.573 2.573 0 0 0 2.48-2.58C8.64 3.15 7.49 2 6.06 2a2.58 2.58 0 0 0-2.58 2.58c.01 1.4 1.11 2.53 2.49 2.58ZM7 14.44c-1.37.23-2.88-.01-3.94-.72-1.41-.94-1.41-2.48 0-3.42 1.07-.71 2.6-.95 3.97-.71M12 14.63a.605.605 0 0 0-.19 0 2.573 2.573 0 0 1-2.48-2.58c0-1.43 1.15-2.58 2.58-2.58a2.58 2.58 0 0 1 2.58 2.58c-.01 1.4-1.11 2.54-2.49 2.58ZM9.09 17.78c-1.41.94-1.41 2.48 0 3.42 1.6 1.07 4.22 1.07 5.82 0 1.41-.94 1.41-2.48 0-3.42-1.59-1.06-4.22-1.06-5.82 0Z"],
+  monitor:["M6.44 2h11.11C21.11 2 22 2.89 22 6.44v6.33c0 3.56-.89 4.44-4.44 4.44H6.44C2.89 17.22 2 16.33 2 12.78V6.44C2 2.89 2.89 2 6.44 2ZM12 17.22V22M2 13h20M7.5 22h9"],
+  wifi:["M4.91 11.84c4.3-3.32 9.89-3.32 14.19 0M2 8.36c6.06-4.68 13.94-4.68 20 0M6.79 15.49c3.15-2.44 7.26-2.44 10.41 0M9.4 19.15c1.58-1.22 3.63-1.22 5.21 0"],
+  dumbbell:["M17.18 18c2.4 0 3-1.35 3-3V9c0-1.65-.6-3-3-3s-3 1.35-3 3v6c0 1.65.6 3 3 3ZM6.82 18c-2.4 0-3-1.35-3-3V9c0-1.65.6-3 3-3s3 1.35 3 3v6c0 1.65-.6 3-3 3ZM9.82 12h4.36M22.5 14.5v-5M1.5 14.5v-5"],
+  door:["M13 22H5c-2 0-3-1-3-3v-8c0-2 1-3 3-3h5v11c0 2 1 3 3 3ZM10.11 4c-.08.3-.11.63-.11 1v3H5V6c0-1.1.9-2 2-2h3.11ZM14 8v5M18 8v5M17 17h-2c-.55 0-1 .45-1 1v4h4v-4c0-.55-.45-1-1-1ZM6 13v4","M10 19V5c0-2 1-3 3-3h6c2 0 3 1 3 3v14c0 2-1 3-3 3h-6c-2 0-3-1-3-3Z"],
+  printer:["M7.25 7h9.5V5c0-2-.75-3-3-3h-3.5c-2.25 0-3 1-3 3v2ZM16 15v4c0 2-1 3-3 3h-2c-2 0-3-1-3-3v-4h8Z","M21 10v5c0 2-1 3-3 3h-2v-3H8v3H6c-2 0-3-1-3-3v-5c0-2 1-3 3-3h12c2 0 3 1 3 3ZM17 15H7M7 11h3"],
+  broom:["M9.87 5.67 6.45 7.75 4.89 5.19a2.01 2.01 0 0 1 .67-2.75 2.01 2.01 0 0 1 2.75.67l1.56 2.56ZM11.82 9.16l-3.16 1.92a3.978 3.978 0 0 0-1.51 5.18l2.05 4.18c.66 1.35 2.26 1.82 3.54 1.03l6.43-3.91c1.29-.78 1.6-2.41.71-3.62l-2.77-3.74c-1.2-1.62-3.45-2.16-5.29-1.04Z","m10.757 5.098-5.125 3.12 2.08 3.417 5.125-3.12-2.08-3.417ZM14.31 16.81l1.65 2.71M11.75 18.37l1.65 2.71M16.87 15.25l1.65 2.71"],
+  paperclip:["M11.97 12v3.5c0 1.93 1.57 3.5 3.5 3.5s3.5-1.57 3.5-3.5V10c0-3.87-3.13-7-7-7s-7 3.13-7 7v6c0 3.31 2.69 6 6 6"],
+  camera:["M6.76 22h10.48c2.76 0 3.86-1.69 3.99-3.75l.52-8.26A3.753 3.753 0 0 0 18 6c-.61 0-1.17-.35-1.45-.89l-.72-1.45C15.37 2.75 14.17 2 13.15 2h-2.29c-1.03 0-2.23.75-2.69 1.66l-.72 1.45C7.17 5.65 6.61 6 6 6 3.83 6 2.11 7.83 2.25 9.99l.52 8.26C2.89 20.31 4 22 6.76 22ZM10.5 8h3","M12 18c1.79 0 3.25-1.46 3.25-3.25S13.79 11.5 12 11.5s-3.25 1.46-3.25 3.25S10.21 18 12 18Z"],
+  check:["M12 22c5.5 0 10-4.5 10-10S17.5 2 12 2 2 6.5 2 12s4.5 10 10 10Z","m7.75 12 2.83 2.83 5.67-5.66"],
+  star:["m13.73 3.51 1.76 3.52c.24.49.88.96 1.42 1.05l3.19.53c2.04.34 2.52 1.82 1.05 3.28l-2.48 2.48c-.42.42-.65 1.23-.52 1.81l.71 3.07c.56 2.43-.73 3.37-2.88 2.1l-2.99-1.77c-.54-.32-1.43-.32-1.98 0l-2.99 1.77c-2.14 1.27-3.44.32-2.88-2.1l.71-3.07c.13-.58-.1-1.39-.52-1.81l-2.48-2.48c-1.46-1.46-.99-2.94 1.05-3.28l3.19-.53c.53-.09 1.17-.56 1.41-1.05l1.76-3.52c.96-1.91 2.52-1.91 3.47 0Z"],
+  flame:["M6.09 13.28h3.09v7.2c0 1.68.91 2.02 2.02.76l7.57-8.6c.93-1.05.54-1.92-.87-1.92h-3.09v-7.2c0-1.68-.91-2.02-2.02-.76l-7.57 8.6c-.92 1.06-.53 1.92.87 1.92Z"],
+  sparkles:["M6.09 13.28h3.09v7.2c0 1.68.91 2.02 2.02.76l7.57-8.6c.93-1.05.54-1.92-.87-1.92h-3.09v-7.2c0-1.68-.91-2.02-2.02-.76l-7.57 8.6c-.92 1.06-.53 1.92.87 1.92Z"],
+  trending:["m16.5 9.5-4.2 4.2-1.6-2.4-3.2 3.2","M14.5 9.5h2v2","M9 22h6c5 0 7-2 7-7V9c0-5-2-7-7-7H9C4 2 2 4 2 9v6c0 5 2 7 7 7Z"],
+  sun:["M12 18.5a6.5 6.5 0 1 0 0-13 6.5 6.5 0 0 0 0 13Z","m19.14 19.14-.13-.13m0-14.02.13-.13M4.86 19.14l.13-.13M12 2.08V2M12 22v-.08M2.08 12H2M22 12h-.08M4.99 4.99l-.13-.13"],
+  qr:{vb:'0 0 256 256',d:"M128,24A104,104,0,1,0,232,128,104.11,104.11,0,0,0,128,24Zm0,192a88,88,0,1,1,88-88A88.1,88.1,0,0,1,128,216ZM97.07,100.26a59.33,59.33,0,0,1,0,55.48,8,8,0,1,1-14.14-7.48,42.79,42.79,0,0,0,0-40.52,8,8,0,0,1,14.14-7.48Zm56-32a126.67,126.67,0,0,1,0,119.54A8,8,0,0,1,139,180.23a110.62,110.62,0,0,0,0-104.46,8,8,0,0,1,14.12-7.54Zm-28,16a93,93,0,0,1,0,87.52,8,8,0,1,1-14.12-7.52,77,77,0,0,0,0-72.48,8,8,0,1,1,14.12-7.52Z"},
+  shield:["M10.49 2.23 5.5 4.11c-1.15.43-2.09 1.79-2.09 3.01v7.43c0 1.18.78 2.73 1.73 3.44l4.3 3.21c1.41 1.06 3.73 1.06 5.14 0l4.3-3.21c.95-.71 1.73-2.26 1.73-3.44V7.12c0-1.23-.94-2.59-2.09-3.02l-4.99-1.87c-.85-.31-2.21-.31-3.04 0Z"],
+  lock:["M6 10V8c0-3.31 1-6 6-6s6 2.69 6 6v2M17 22H7c-4 0-5-1-5-5v-2c0-4 1-5 5-5h10c4 0 5 1 5 5v2c0 4-1 5-5 5Z","M15.996 16h.01M11.995 16h.01M7.995 16h.008"],
+  badge:["M4.26 11.02v4.97c0 1.82 0 1.82 1.72 2.98l4.73 2.73c.71.41 1.87.41 2.58 0l4.73-2.73c1.72-1.16 1.72-1.16 1.72-2.98v-4.97c0-1.82 0-1.82-1.72-2.98l-4.73-2.73c-.71-.41-1.87-.41-2.58 0L5.98 8.04C4.26 9.2 4.26 9.2 4.26 11.02Z","M17.5 7.63V5c0-2-1-3-3-3h-5c-2 0-3 1-3 3v2.56"],
+  more:["M5 10c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2ZM19 10c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2ZM12 10c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2Z"],
+};
+
+function Icon({ name, size=18, color='currentColor', stroke, variant='Linear' }) {
+  const data = _ICN[name];
+  if (!data) return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none"
+      stroke={color} strokeWidth="1.6" strokeLinecap="round" style={{flexShrink:0}}>
+      <circle cx="12" cy="12" r="9"/>
+    </svg>
+  );
+  if (Array.isArray(data)) {
+    return (
+      <svg width={size} height={size} viewBox="0 0 24 24" fill="none"
+        xmlns="http://www.w3.org/2000/svg" style={{flexShrink:0}}>
+        {data.map((d, i) => (
+          <path key={i} d={d} stroke={color} strokeWidth="1.5"
+            strokeLinecap="round" strokeLinejoin="round" strokeMiterlimit="10" fill="none" />
+        ))}
+      </svg>
+    );
+  }
+  return (
+    <svg width={size} height={size} viewBox={data.vb}
+      xmlns="http://www.w3.org/2000/svg" style={{flexShrink:0}}>
+      <path d={data.d} fill={color} />
+    </svg>
+  );
+}
+
+// ---- Eyebrow label ----
+function Eyebrow({ children, color = FOMO_INK, style = {} }) {
+  return (
+    <div style={{
+      fontFamily: 'DM Sans, system-ui', fontSize: 10.5, fontWeight: 700,
+      letterSpacing: '0.18em', textTransform: 'uppercase', color,
+      ...style,
+    }}>{children}</div>
+  );
+}
+
+// ---- Editorial hairline ----
+function Hairline({ color = FOMO_HAIRLINE, style = {} }) {
+  return <div style={{ height: 1, background: color, ...style }} />;
+}
+
+// ---- Section heading (display serif) ----
+function SectionTitle({ children, size = 22, style = {} }) {
+  return (
+    <h2 style={{
+      fontFamily: '"DM Serif Display", Georgia, serif', fontWeight: 400,
+      fontSize: size, lineHeight: 1.1, letterSpacing: '-0.02em',
+      color: FOMO_INK, margin: 0, ...style,
+    }}>{children}</h2>
+  );
+}
+
+// ---- Primary button (black pill, sentence case) ----
+function PrimaryButton({ children, onClick, fullWidth = false, icon, size = 'md', style = {} }) {
+  const padY = size === 'lg' ? 16 : size === 'sm' ? 10 : 13;
+  const padX = size === 'lg' ? 22 : size === 'sm' ? 14 : 18;
+  const fs = size === 'lg' ? 16 : size === 'sm' ? 13 : 14;
+  return (
+    <button onClick={onClick} style={{
+      display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: 8,
+      padding: `${padY}px ${padX}px`,
+      background: FOMO_INK, color: '#fff', border: 'none',
+      borderRadius: 999, fontFamily: 'DM Sans, system-ui',
+      fontSize: fs, fontWeight: 500, letterSpacing: '-0.005em',
+      cursor: 'pointer', width: fullWidth ? '100%' : undefined,
+      transition: 'transform .12s, background .12s', ...style,
+    }}
+    onMouseDown={(e) => e.currentTarget.style.transform = 'scale(0.98)'}
+    onMouseUp={(e) => e.currentTarget.style.transform = 'scale(1)'}
+    onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}>
+      {children}
+      {icon && <Icon name={icon} size={fs + 2} />}
+    </button>
+  );
+}
+
+// ---- Ghost / outline button ----
+function GhostButton({ children, onClick, icon, style = {} }) {
+  return (
+    <button onClick={onClick} style={{
+      display: 'inline-flex', alignItems: 'center', gap: 6,
+      padding: '10px 14px', background: 'transparent', color: FOMO_INK,
+      border: `1px solid ${FOMO_INK}`, borderRadius: 999,
+      fontFamily: 'DM Sans, system-ui', fontSize: 13, fontWeight: 500,
+      cursor: 'pointer', ...style,
+    }}>
+      {children}
+      {icon && <Icon name={icon} size={14} />}
+    </button>
+  );
+}
+
+// ---- Pill / chip ----
+function Pill({ children, active = false, onClick, icon, style = {} }) {
+  return (
+    <button onClick={onClick} style={{
+      display: 'inline-flex', alignItems: 'center', gap: 6,
+      padding: '7px 12px',
+      background: active ? FOMO_INK : 'transparent',
+      color: active ? '#fff' : FOMO_INK,
+      border: `1px solid ${active ? FOMO_INK : '#1a1a1a'}`,
+      borderRadius: 999, fontFamily: 'DM Sans, system-ui', fontSize: 12,
+      fontWeight: 500, letterSpacing: '-0.005em', cursor: 'pointer',
+      whiteSpace: 'nowrap', transition: 'all .15s', ...style,
+    }}>
+      {icon && <Icon name={icon} size={12} />}
+      {children}
+    </button>
+  );
+}
+
+// ---- Toggle switch (FOMO style — black on cream) ----
+function Toggle({ checked, onChange }) {
+  return (
+    <button onClick={() => onChange(!checked)} style={{
+      width: 44, height: 26, borderRadius: 999, position: 'relative',
+      background: checked ? FOMO_INK : '#d6cfbe',
+      border: 'none', cursor: 'pointer', padding: 0,
+      transition: 'background .2s',
+    }}>
+      <span style={{
+        position: 'absolute', top: 3, left: checked ? 21 : 3,
+        width: 20, height: 20, borderRadius: '50%', background: '#fff',
+        transition: 'left .2s', boxShadow: '0 1px 3px rgba(0,0,0,.15)',
+      }} />
+    </button>
+  );
+}
+
+// ---- Image placeholder plate (editorial colored block) ----
+// Used as stand-in for room photography + food photography.
+// Each plate is a textured solid color with an inner hairline frame
+// + a label so the plate reads as an intentional editorial illustration.
+function ImagePlate({ tone = 'sand', label, sublabel, height = 140, full = false, style = {}, decor }) {
+  const PALETTE = {
+    sand:    { bg: '#e9d8b8', ink: '#3a2a1a', frond: '#b89564' },
+    beach:   { bg: '#cfe4e3', ink: '#1f3a3a', frond: '#7faaa8' },
+    sunset:  { bg: '#f0b894', ink: '#3a1f10', frond: '#c87a48' },
+    leather: { bg: '#b56a4c', ink: '#2a0f06', frond: '#8a4530' },
+    night:   { bg: '#1f2433', ink: '#e8d6a8', frond: '#4a5470' },
+    olive:   { bg: '#aab78c', ink: '#1f2a14', frond: '#7a8a5a' },
+    rose:    { bg: '#f0a8a8', ink: '#3a1014', frond: '#c87078' },
+    cream:   { bg: '#f1e8c8', ink: '#3a2a14', frond: '#c8b88a' },
+    curry:   { bg: '#d68a2a', ink: '#2a1a00', frond: '#8a5810' },
+    forest:  { bg: '#3a5a3a', ink: '#e8f0d8', frond: '#1f3a1f' },
+    porter:  { bg: '#3a2014', ink: '#e8d6a8', frond: '#1f0a05' },
+    melon:   { bg: '#e87a78', ink: '#3a0a14', frond: '#b85056' },
+    aqua:    { bg: '#a8d6d4', ink: '#0f2a2a', frond: '#6a9a98' },
+    bronze:  { bg: '#a8794a', ink: '#2a1408', frond: '#7a4f2a' },
+    moss:    { bg: '#7a8a5a', ink: '#1f2a0f', frond: '#5a6a3a' },
+  };
+  const p = PALETTE[tone] || PALETTE.sand;
+  return (
+    <div style={{
+      position: 'relative', overflow: 'hidden',
+      height, width: full ? '100%' : undefined,
+      background: p.bg, color: p.ink,
+      borderRadius: 4, ...style,
+    }}>
+      {/* paper grain */}
+      <div style={{
+        position: 'absolute', inset: 0,
+        background: `radial-gradient(circle at 20% 30%, rgba(255,255,255,0.18), transparent 60%), radial-gradient(circle at 80% 80%, rgba(0,0,0,0.12), transparent 50%)`,
+        mixBlendMode: 'overlay',
+      }} />
+      {/* abstract botanical decor */}
+      <svg viewBox="0 0 200 200" preserveAspectRatio="xMaxYMin slice" style={{
+        position: 'absolute', right: -20, top: -10, width: '60%', height: '110%',
+        opacity: 0.55, color: p.frond,
+      }}>
+        {decor === 'palm' || !decor ? (
+          <g fill="currentColor">
+            <ellipse cx="120" cy="40" rx="6" ry="40" transform="rotate(20 120 40)" />
+            <ellipse cx="140" cy="55" rx="5" ry="45" transform="rotate(45 140 55)" />
+            <ellipse cx="155" cy="75" rx="5" ry="48" transform="rotate(70 155 75)" />
+            <ellipse cx="105" cy="55" rx="5" ry="42" transform="rotate(-10 105 55)" />
+            <ellipse cx="90" cy="80" rx="5" ry="45" transform="rotate(-35 90 80)" />
+          </g>
+        ) : decor === 'circle' ? (
+          <g>
+            <circle cx="140" cy="60" r="50" fill="none" stroke="currentColor" strokeWidth="1" />
+            <circle cx="140" cy="60" r="30" fill="currentColor" opacity="0.4" />
+          </g>
+        ) : decor === 'stripes' ? (
+          <g stroke="currentColor" strokeWidth="2" fill="none">
+            {[0,1,2,3,4,5,6,7].map(i => <line key={i} x1={120 + i*10} y1="0" x2={60 + i*10} y2="200" />)}
+          </g>
+        ) : null}
+      </svg>
+      {/* inner hairline frame */}
+      <div style={{
+        position: 'absolute', inset: 8,
+        border: `1px solid ${p.ink}`, opacity: 0.25, pointerEvents: 'none',
+        borderRadius: 2,
+      }} />
+      {label && (
+        <div style={{
+          position: 'absolute', left: 14, bottom: 12, right: 60,
+          fontFamily: '"DM Serif Display", Georgia, serif',
+          fontSize: 18, lineHeight: 1.05, letterSpacing: '-0.02em',
+          color: p.ink,
+        }}>
+          {label}
+          {sublabel && <div style={{
+            fontFamily: 'DM Sans, system-ui', fontSize: 9, fontWeight: 600,
+            letterSpacing: '0.18em', textTransform: 'uppercase',
+            opacity: 0.7, marginTop: 4,
+          }}>{sublabel}</div>}
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ---- Bottom nav (persistent) ----
+function BottomNav({ active = 'home', onChange = () => {} }) {
+  const tabs = [
+    { id: 'home', label: 'Home', icon: 'home' },
+    { id: 'bookings', label: 'Meeting', icon: 'calendar' },
+    { id: 'food', label: 'Soi21', icon: 'utensils' },
+    { id: 'community', label: 'Community', icon: 'users' },
+    { id: 'support', label: 'Support', icon: 'life_buoy' },
+  ];
+  return (
+    <div style={{
+      position: 'absolute', bottom: 0, left: 0, right: 0,
+      background: 'rgba(249,244,232,0.92)',
+      backdropFilter: 'blur(14px) saturate(180%)',
+      WebkitBackdropFilter: 'blur(14px) saturate(180%)',
+      borderTop: `1px solid ${FOMO_HAIRLINE}`,
+      paddingBottom: 28, paddingTop: 8, zIndex: 100,
+    }}>
+      <div style={{
+        display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)',
+        padding: '0 4px',
+      }}>
+        {tabs.map(t => {
+          const isActive = active === t.id;
+          return (
+            <button key={t.id} onClick={() => onChange(t.id)} style={{
+              background: 'transparent', border: 'none', cursor: 'pointer',
+              display: 'flex', flexDirection: 'column', alignItems: 'center',
+              gap: 3, padding: '6px 0', position: 'relative',
+              color: isActive ? FOMO_INK : FOMO_INK_2,
+            }}>
+              {isActive && <div style={{
+                position: 'absolute', top: -9, left: '50%', transform: 'translateX(-50%)',
+                width: 22, height: 2, background: FOMO_INK, borderRadius: 1,
+              }} />}
+              <Icon name={t.icon} size={20} stroke={isActive ? 1.8 : 1.4} />
+              <span style={{
+                fontFamily: 'DM Sans, system-ui', fontSize: 9.5,
+                fontWeight: isActive ? 700 : 500,
+                letterSpacing: '0.06em', textTransform: 'uppercase',
+              }}>{t.label}</span>
+            </button>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+// ---- Phone status bar (custom, FOMO-styled) ----
+function StatusBar({ time = '8:47', dark = false }) {
+  const c = dark ? '#fff' : '#111';
+  return (
+    <div style={{
+      display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+      padding: '12px 28px 4px', position: 'relative', zIndex: 20,
+    }}>
+      <span style={{
+        fontFamily: '-apple-system, "SF Pro", system-ui',
+        fontWeight: 600, fontSize: 15, color: c, letterSpacing: -0.2,
+      }}>{time}</span>
+      <div style={{ display: 'flex', gap: 5, alignItems: 'center', paddingRight: 1 }}>
+        <svg width="16" height="11" viewBox="0 0 19 12">
+          <rect x="0" y="7.5" width="3.2" height="4.5" rx="0.7" fill={c}/>
+          <rect x="4.8" y="5" width="3.2" height="7" rx="0.7" fill={c}/>
+          <rect x="9.6" y="2.5" width="3.2" height="9.5" rx="0.7" fill={c}/>
+          <rect x="14.4" y="0" width="3.2" height="12" rx="0.7" fill={c}/>
+        </svg>
+        <svg width="14" height="10" viewBox="0 0 17 12">
+          <path d="M8.5 3.2C10.8 3.2 12.9 4.1 14.4 5.6L15.5 4.5C13.7 2.7 11.2 1.5 8.5 1.5C5.8 1.5 3.3 2.7 1.5 4.5L2.6 5.6C4.1 4.1 6.2 3.2 8.5 3.2Z" fill={c}/>
+          <path d="M8.5 6.8C9.9 6.8 11.1 7.3 12 8.2L13.1 7.1C11.8 5.9 10.2 5.1 8.5 5.1C6.8 5.1 5.2 5.9 3.9 7.1L5 8.2C5.9 7.3 7.1 6.8 8.5 6.8Z" fill={c}/>
+          <circle cx="8.5" cy="10.5" r="1.5" fill={c}/>
+        </svg>
+        <svg width="23" height="11" viewBox="0 0 27 13">
+          <rect x="0.5" y="0.5" width="23" height="12" rx="3.5" stroke={c} strokeOpacity="0.45" fill="none"/>
+          <rect x="2" y="2" width="18" height="9" rx="2" fill={c}/>
+          <path d="M25 4.5V8.5C25.8 8.2 26.5 7.2 26.5 6.5C26.5 5.8 25.8 4.8 25 4.5Z" fill={c} fillOpacity="0.4"/>
+        </svg>
+      </div>
+    </div>
+  );
+}
+
+// ---- Home indicator (mocked at bottom of phone) ----
+function HomeIndicator({ dark = false }) {
+  return (
+    <div style={{
+      position: 'absolute', bottom: 6, left: 0, right: 0,
+      display: 'flex', justifyContent: 'center', zIndex: 200, pointerEvents: 'none',
+    }}>
+      <div style={{
+        width: 110, height: 4, borderRadius: 999,
+        background: dark ? 'rgba(255,255,255,0.7)' : 'rgba(0,0,0,0.25)',
+      }} />
+    </div>
+  );
+}
+
+// ---- App shell wrapper (consistent paddings) ----
+function Screen({ children, bg = FOMO_BG, style = {} }) {
+  return (
+    <div style={{
+      position: 'absolute', inset: 0,
+      background: bg, overflow: 'hidden',
+      fontFamily: 'DM Sans, system-ui',
+      ...style,
+    }}>
+      {children}
+    </div>
+  );
+}
+
+Object.assign(window, {
+  FOMO_BG, FOMO_INK, FOMO_PINK, FOMO_PINK_SOFT, FOMO_INK_2, FOMO_BORDER,
+  FOMO_HAIRLINE, FOMO_GREEN, FOMO_GREEN_LIGHT,
+  Icon, Eyebrow, Hairline, SectionTitle, PrimaryButton, GhostButton,
+  Pill, Toggle, ImagePlate, BottomNav, StatusBar, HomeIndicator, Screen,
+});
+
+
+// Home Hub — main feed
+// Top bar: greeting + bell + Campus Pass FAB
+// Happening Today: horizontal carousel
+// Quick Actions Grid: 4 buttons
+// My Day: countdown card
+
+function HomeScreen({ navTab: navTabProp, onNavChange } = {}) {
+  const [_navLocal, _setNavLocal] = React.useState('home');
+  const navTab = navTabProp !== undefined ? navTabProp : _navLocal;
+  const setNavTab = onNavChange || _setNavLocal;
+
+  const events = [
+  { tone: 'curry', label: 'Thai Curry Wednesday', sub: 'Soi21 · 11:30—14:00', tag: 'LUNCH SPECIAL' },
+  { tone: 'beach', label: 'Founders Coffee Hour', sub: 'Atrium South · 09:00', tag: 'COMMUNITY' },
+  { tone: 'rose', label: 'After Hours: Vinyl', sub: 'Soi21 Bar · 17:00', tag: 'TONIGHT' },
+  { tone: 'olive', label: 'Yoga on the Lawn', sub: 'East Garden · 16:30', tag: 'WELLNESS' }];
+
+
+  const quickActions = [
+  { id: 'room',    label: 'Book a Room',      icon: 'calendar',   tone: 'cream', nav: 'bookings'   },
+  { id: 'order',   label: 'Order from Soi21', icon: 'utensils',   tone: 'cream', nav: 'food'       },
+  { id: 'request', label: 'Raise a Request',  icon: 'life_buoy',  tone: 'cream', nav: 'support'    },
+  { id: 'gym',     label: 'Gym & Wellness',   icon: 'dumbbell',   tone: 'cream', nav: 'community'  }];
+
+
+  const quickToneStyles = {
+    pink: { bg: '#fcc9ca', fg: FOMO_INK },
+    ink: { bg: FOMO_INK, fg: '#fcc9ca' },
+    leaf: { bg: '#eaf4df', fg: FOMO_INK },
+    cream: { bg: '#fefcf6', fg: FOMO_INK, border: '1px solid #e6dcc4' }
+  };
+
+  return (
+    <Screen>
+      <StatusBar />
+      <div style={{ height: 'calc(100% - 30px)', overflow: 'auto', paddingBottom: 100 }}>
+
+        {/* ============ Top brand strip + hairline (FOMO signature) ============ */}
+        <div style={{ padding: '8px 22px 0', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <img src="fomo/assets/logo-fomo-black-sm.png" style={{ height: 22 }} alt="FOMO" />
+          <Eyebrow style={{ color: FOMO_INK_2, fontSize: 9.5 }}>Forus · Stavanger</Eyebrow>
+        </div>
+        <Hairline style={{ margin: '10px 22px 0' }} />
+
+        {/* ============ Greeting + actions ============ */}
+        <div style={{
+          padding: '18px 22px 4px',
+          display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 12
+        }}>
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <Eyebrow style={{ color: FOMO_INK_2 }}>Tuesday · 8:47</Eyebrow>
+            <h1 style={{
+              fontFamily: '"DM Serif Display", Georgia, serif', fontWeight: 400,
+              fontSize: 30, lineHeight: 1.05, letterSpacing: '-0.02em',
+              color: FOMO_INK, margin: '8px 0 4px'
+            }}>
+              Good morning,<br /><em style={{ fontStyle: 'italic' }}>Henrik.</em>
+            </h1>
+            <div style={{ fontSize: 13, color: FOMO_INK_2, fontWeight: 500 }}>
+              Lumen Robotics · Building West · 3F
+            </div>
+          </div>
+
+          {/* Notification bell */}
+          <button style={{
+            width: 42, height: 42, borderRadius: 999, background: 'transparent',
+            border: `1px solid ${FOMO_INK}`, cursor: 'pointer',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            position: 'relative', flexShrink: 0
+          }}>
+            <Icon name="bell" size={17} />
+            <span style={{
+              position: 'absolute', top: 7, right: 9,
+              width: 7, height: 7, borderRadius: 999, background: '#d96f72',
+              border: '1.5px solid #f9f4e8'
+            }} />
+          </button>
+        </div>
+
+        {/* ============ Campus Pass / NFC card ============ */}
+        <div style={{ padding: '20px 22px 0' }}>
+          <div style={{
+            background: FOMO_INK, color: '#fff', borderRadius: 18,
+            padding: '16px 18px', position: 'relative', overflow: 'hidden',
+            boxShadow: '0 12px 32px rgba(17,17,17,0.18)'
+          }}>
+            {/* flamingo background */}
+            <img src="fomo/assets/flamingo-2.png" style={{
+              position: 'absolute', right: 0, top: 0, height: '140%',
+              opacity: 0.1, filter: 'grayscale(1) brightness(2)',
+              pointerEvents: 'none', objectFit: 'contain', objectPosition: 'top right',
+            }} alt="" />
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+              <div>
+                <Eyebrow style={{ color: FOMO_PINK, fontSize: 9.5 }}>Campus Pass · NFC</Eyebrow>
+                <div style={{
+                  fontFamily: '"DM Serif Display", serif', fontSize: 22,
+                  marginTop: 6, lineHeight: 1.1, color: '#fff'
+                }}>
+                  Tap to open<br />
+                  <em style={{ fontStyle: 'italic', color: FOMO_PINK }}>any door.</em>
+                </div>
+              </div>
+              <button style={{
+                width: 56, height: 56, borderRadius: 999,
+                background: FOMO_PINK, border: 'none', cursor: 'pointer',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                boxShadow: '0 6px 16px rgba(252,201,202,0.4)'
+              }}>
+                <Icon name="scan" size={24} color={FOMO_INK} stroke={1.8} />
+              </button>
+            </div>
+            <div style={{
+              display: 'flex', gap: 14, marginTop: 14, paddingTop: 14,
+              borderTop: '1px solid rgba(252,201,202,0.25)',
+              fontSize: 11, color: 'rgba(255,255,255,0.7)'
+            }}>
+              <div>
+                <div style={{ color: FOMO_PINK, fontSize: 9.5, fontWeight: 600, letterSpacing: '0.18em' }}>MEMBER</div>
+                <div style={{ marginTop: 3, color: '#fff', fontSize: 12, fontWeight: 500 }}>H. Solberg · 04827</div>
+              </div>
+              <div style={{ marginLeft: 'auto' }}>
+                <div style={{ color: FOMO_PINK, fontSize: 9.5, fontWeight: 600, letterSpacing: '0.18em' }}>ACCESS</div>
+                <div style={{ marginTop: 3, color: '#fff', fontSize: 12, fontWeight: 500 }}>All zones · 24/7</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* ============ Happening Today carousel ============ */}
+        <div style={{ marginTop: 26 }}>
+          <div style={{
+            display: 'flex', justifyContent: 'space-between', alignItems: 'baseline',
+            padding: '0 22px'
+          }}>
+            <SectionTitle size={22}>Happening today</SectionTitle>
+            <button style={{
+              background: 'none', border: 'none', cursor: 'pointer',
+              fontSize: 11, fontWeight: 600, color: FOMO_INK,
+              textTransform: 'uppercase', letterSpacing: '0.18em',
+              display: 'flex', alignItems: 'center', gap: 4
+            }}>
+              See all <Icon name="arrow_up_right" size={12} />
+            </button>
+          </div>
+
+          <div style={{
+            display: 'flex', gap: 12,
+            overflowX: 'auto', scrollSnapType: 'x mandatory',
+            scrollbarWidth: 'none', msOverflowStyle: 'none', justifyContent: "flex-start", padding: "14px 22px 4px", margin: "0px 0px 0px 22px"
+          }}>
+            {events.map((e, i) =>
+            <div key={i} style={{
+              flex: '0 0 180px', scrollSnapAlign: 'start'
+            }}>
+                <ImagePlate tone={e.tone} height={130} label={e.label} sublabel={e.tag} />
+                <div style={{ marginTop: 8, fontSize: 11.5, color: FOMO_INK_2, fontWeight: 500 }}>
+                  {e.sub}
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* ============ Quick Actions Grid ============ */}
+        <div style={{ padding: '24px 22px 0' }}>
+          <SectionTitle size={22}>Get things done</SectionTitle>
+          <div style={{
+            display: 'grid', gridTemplateColumns: '1fr 1fr',
+            gap: 10, marginTop: 14
+          }}>
+            {quickActions.map((a) => {
+              const s = quickToneStyles[a.tone];
+              return (
+                <button key={a.id} onClick={() => a.nav && setNavTab(a.nav)} style={{
+                  background: s.bg, color: s.fg,
+                  border: s.border || 'none', borderRadius: 14,
+                  padding: '16px 14px', textAlign: 'left',
+                  cursor: 'pointer', position: 'relative',
+                  minHeight: 96, display: 'flex', flexDirection: 'column',
+                  justifyContent: 'flex-end'
+                }}>
+                  <Icon name={a.icon} size={22} stroke={1.6} />
+                  <div style={{
+                    fontFamily: '"DM Serif Display", serif',
+                    fontSize: 17, lineHeight: 1.05, marginTop: 6
+                  }}>{a.label}</div>
+                </button>);
+
+            })}
+          </div>
+        </div>
+
+        {/* ============ My Day card ============ */}
+        <div style={{ padding: '26px 22px 0' }}>
+          <div style={{
+            display: 'flex', justifyContent: 'space-between', alignItems: 'baseline'
+          }}>
+            <SectionTitle size={22}>My day</SectionTitle>
+            <Eyebrow style={{ color: FOMO_INK_2 }}>3 items</Eyebrow>
+          </div>
+
+          {/* Next-up card (with countdown) */}
+          <div style={{
+            background: FOMO_PINK, borderRadius: 18, padding: 18,
+            marginTop: 14, position: 'relative', overflow: 'hidden'
+          }}>
+            <Eyebrow style={{ fontSize: 9.5 }}>Up next · in 22 min</Eyebrow>
+            <div style={{
+              fontFamily: '"DM Serif Display", serif', fontSize: 24,
+              lineHeight: 1.1, letterSpacing: '-0.02em', color: FOMO_INK,
+              marginTop: 8
+            }}>
+              Playa Del FOMO
+            </div>
+            <div style={{ fontSize: 12.5, color: FOMO_INK_2, fontWeight: 500, marginTop: 4 }}>
+              South · 2F · 09:30 — 10:30 · Quarterly OKRs
+            </div>
+
+            <div style={{
+              display: 'flex', gap: 8, marginTop: 14, alignItems: 'center'
+            }}>
+              {/* attendee avatars */}
+              <div style={{ display: 'flex', marginRight: 6 }}>
+                {['#1f1f1f', '#738c70', '#d96f72', '#b85356'].map((c, i) =>
+                <div key={i} style={{
+                  width: 24, height: 24, borderRadius: 999, background: c,
+                  border: '2px solid #fcc9ca', marginLeft: i === 0 ? 0 : -8,
+                  color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  fontSize: 9, fontWeight: 700
+                }}>{['HS', 'EM', 'JK', 'MR'][i]}</div>
+                )}
+              </div>
+              <span style={{ fontSize: 11.5, color: FOMO_INK_2, fontWeight: 500 }}>+ 4 from Lumen</span>
+              <div style={{ marginLeft: 'auto' }}>
+                <PrimaryButton size="sm">Check in</PrimaryButton>
+              </div>
+            </div>
+          </div>
+
+          {/* Secondary timeline items */}
+          <div style={{ marginTop: 12, display: 'flex', flexDirection: 'column', gap: 0 }}>
+            {[
+            { time: '12:15', dur: '45 min', label: 'Soi21 — Pre-ordered lunch', sub: 'Pad Krapow · ready for pickup', icon: 'utensils' },
+            { time: '15:00', dur: '30 min', label: 'The Cowboy Room', sub: 'East · 1F · 1:1 with Maja', icon: 'door' }].
+            map((item, i) =>
+            <div key={i} style={{
+              display: 'flex', alignItems: 'center', gap: 14,
+              padding: '14px 0',
+              borderTop: i === 0 ? `1px solid ${FOMO_HAIRLINE}` : `1px solid ${FOMO_BORDER}`
+            }}>
+                <div style={{
+                fontFamily: '"DM Serif Display", serif', fontSize: 18,
+                color: FOMO_INK, width: 50, lineHeight: 1
+              }}>{item.time}</div>
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <div style={{ fontSize: 13, fontWeight: 500, color: FOMO_INK }}>{item.label}</div>
+                  <div style={{ fontSize: 11, color: FOMO_INK_2, marginTop: 2 }}>{item.sub}</div>
+                </div>
+                <Icon name={item.icon} size={18} color={FOMO_INK} stroke={1.4} />
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* footer note */}
+        <div style={{
+          padding: '24px 22px 0', textAlign: 'center',
+          fontSize: 10, color: FOMO_INK_2, letterSpacing: '0.18em', textTransform: 'uppercase'
+        }}>
+          — 50 000 m² · 200+ companies · 1 800+ workers —
+        </div>
+      </div>
+
+      {!onNavChange && <BottomNav active={navTab} onChange={setNavTab} />}
+      {!onNavChange && <HomeIndicator />}
+    </Screen>);
+
+}
+
+Object.assign(window, { HomeScreen });
+
+// Rooms — "Themed Experience" room booking
+// Top filter bar (Capacity / Location / Vibe)
+// Image-forward vertical list of themed rooms
+// Bottom sheet modal: time-slot picker + Soi21 catering toggle
+
+function RoomsScreen({ navTab: navTabProp, onNavChange } = {}) {
+  const [_navLocal, _setNavLocal] = React.useState('bookings');
+  const navTab = navTabProp !== undefined ? navTabProp : _navLocal;
+  const setNavTab = onNavChange || _setNavLocal;
+  const [capacity, setCapacity] = React.useState('1–6');
+  const [location, setLocation] = React.useState('All');
+  const [vibe, setVibe] = React.useState('Any');
+
+  const [sheetRoom, setSheetRoom] = React.useState(null);
+  const [slot, setSlot] = React.useState('09:30');
+  const [duration, setDuration] = React.useState(60);
+  const [catering, setCatering] = React.useState(false);
+
+  // Date picker: build next 7 days
+  const today = new Date();
+  const days = Array.from({ length: 7 }, (_, i) => {
+    const d = new Date(today);
+    d.setDate(today.getDate() + i);
+    return d;
+  });
+  const DAY_ABBR = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+  const [selectedDate, setSelectedDate] = React.useState(days[0]);
+
+  const closeSheet = () => { setSheetRoom(null); setSlot('09:30'); setDuration(60); setCatering(false); };
+
+  const rooms = [
+    { name: 'Playa Del FOMO',  loc: 'South · 2F',   cap: 6,  vibe: 'Playful',   tone: 'beach',  tags: ['Apple TV', 'Whiteboard', 'Sun'], rate: 'Free for members' },
+    { name: 'The Cowboy Room', loc: 'East · 1F',    cap: 4,  vibe: 'Creative',  tone: 'leather', tags: ['Cowhide chairs', 'Apple TV'], rate: 'Free for members' },
+    { name: 'The Penthouse',   loc: 'North · 6F',   cap: 14, vibe: 'Executive', tone: 'night',   tags: ['4K Projector', 'Catered', 'View'], rate: '450 NOK / hr', dark: true },
+    { name: 'The Greenhouse',  loc: 'West · GF',    cap: 8,  vibe: 'Creative',  tone: 'olive',   tags: ['Plants', 'Acoustic panels', 'Apple TV'], rate: 'Free for members' },
+    { name: 'Library Booth',   loc: 'South · 3F',   cap: 2,  vibe: 'Executive', tone: 'cream',   tags: ['Quiet', 'Phone-friendly'], rate: 'Free for members' },
+  ];
+
+  // 30-min time slots
+  const slots = ['08:00','08:30','09:00','09:30','10:00','10:30','11:00','11:30','13:00','13:30','14:00'];
+  const taken = new Set(['08:30','11:30','13:00']);
+
+  return (
+    <Screen>
+      <StatusBar />
+
+      {/* ============ Top bar with title + close ============ */}
+      <div style={{
+        padding: '8px 22px 0',
+        display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+      }}>
+        <img src="fomo/assets/logo-fomo-black-sm.png" style={{ height: 22 }} alt="FOMO" />
+        <Eyebrow style={{ color: FOMO_INK_2, fontSize: 9.5 }}>Meeting</Eyebrow>
+      </div>
+      <Hairline style={{ margin: '10px 22px 0' }} />
+
+      <div style={{ height: 'calc(100% - 30px - 33px)', overflow: 'auto', paddingBottom: 120 }}>
+        {/* ============ Header ============ */}
+        <div style={{ padding: '20px 22px 0' }}>
+          <Eyebrow style={{ color: FOMO_INK_2 }}>The campus, themed</Eyebrow>
+          <h1 style={{
+            fontFamily: '"DM Serif Display", serif', fontWeight: 400,
+            fontSize: 34, lineHeight: 1.0, letterSpacing: '-0.02em',
+            color: FOMO_INK, margin: '10px 0 0',
+          }}>
+            Pick a room<br/>
+            <em style={{ fontStyle: 'italic' }}>with a feeling.</em>
+          </h1>
+          <div style={{ fontSize: 12.5, color: FOMO_INK_2, marginTop: 10 }}>
+            27 themed rooms · 4 buildings · 50 000 m²
+          </div>
+        </div>
+
+        {/* ============ Filters ============ */}
+        <div style={{ padding: '20px 0 0' }}>
+          {/* Capacity */}
+          <div style={{ display: 'flex', gap: 7, padding: '0 22px', overflowX: 'auto', scrollbarWidth: 'none' }}>
+            <Eyebrow style={{ alignSelf: 'center', color: FOMO_INK_2, fontSize: 9.5, marginRight: 4 }}>Seats</Eyebrow>
+            {['1–6', '6–12', '12+'].map(c => (
+              <Pill key={c} active={capacity === c} onClick={() => setCapacity(c)}>{c}</Pill>
+            ))}
+            <div style={{ width: 1, background: FOMO_BORDER, margin: '0 8px' }} />
+            {['Creative', 'Executive', 'Playful'].map(v => (
+              <Pill key={v} active={vibe === v} onClick={() => setVibe(v)}>{v}</Pill>
+            ))}
+          </div>
+
+          {/* Location segmented map */}
+          <div style={{
+            margin: '14px 22px 0',
+            border: `1px solid ${FOMO_BORDER}`, borderRadius: 12,
+            padding: 4, background: '#fefcf6',
+            display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)',
+          }}>
+            {['All','South','West','East','North'].map(l => (
+              <button key={l} onClick={() => setLocation(l)} style={{
+                background: location === l ? FOMO_INK : 'transparent',
+                color: location === l ? '#fff' : FOMO_INK,
+                border: 'none', cursor: 'pointer',
+                padding: '8px 4px', borderRadius: 8,
+                fontFamily: 'DM Sans, system-ui', fontSize: 11, fontWeight: 500,
+                transition: 'all .15s',
+              }}>{l}</button>
+            ))}
+          </div>
+        </div>
+
+        {/* ============ Room cards ============ */}
+        <div style={{ padding: '18px 22px 0', display: 'flex', flexDirection: 'column', gap: 18 }}>
+          {rooms.filter(r => location === 'All' || r.loc.startsWith(location)).map((r, i) => (
+            <div key={i} style={{
+              borderRadius: 14, overflow: 'hidden',
+              background: r.dark ? FOMO_INK : '#fefcf6',
+              border: r.dark ? 'none' : `1px solid ${FOMO_BORDER}`,
+            }}>
+              <ImagePlate tone={r.tone} height={150} label={r.name} sublabel={r.vibe} />
+              <div style={{ padding: 14 }}>
+                {/* meta line */}
+                <div style={{
+                  display: 'flex', alignItems: 'center', gap: 10,
+                  fontSize: 11, color: r.dark ? 'rgba(255,255,255,0.75)' : FOMO_INK_2,
+                  fontWeight: 500,
+                }}>
+                  <span style={{ display: 'inline-flex', alignItems: 'center', gap: 3 }}>
+                    <Icon name="map_pin" size={11} /> {r.loc}
+                  </span>
+                  <span style={{ display: 'inline-flex', alignItems: 'center', gap: 3 }}>
+                    <Icon name="users" size={11} /> {r.cap}
+                  </span>
+                  <span style={{ marginLeft: 'auto', fontWeight: 600, color: r.dark ? FOMO_PINK : FOMO_INK }}>
+                    {r.rate}
+                  </span>
+                </div>
+
+                {/* AV tags */}
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: 5, marginTop: 12 }}>
+                  {r.tags.map(t => (
+                    <span key={t} style={{
+                      fontSize: 10, fontWeight: 500, padding: '4px 8px',
+                      borderRadius: 999, color: r.dark ? '#fcc9ca' : FOMO_INK,
+                      background: r.dark ? 'rgba(252,201,202,0.12)' : '#f9f4e8',
+                      border: r.dark ? '1px solid rgba(252,201,202,0.25)' : `1px solid ${FOMO_BORDER}`,
+                    }}>{t}</span>
+                  ))}
+                </div>
+
+                {/* CTA row */}
+                <div style={{
+                  display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+                  marginTop: 14, paddingTop: 12,
+                  borderTop: r.dark ? '1px solid rgba(252,201,202,0.18)' : `1px solid ${FOMO_BORDER}`,
+                }}>
+                  <div style={{
+                    fontSize: 11, color: r.dark ? 'rgba(255,255,255,0.7)' : FOMO_INK_2,
+                  }}>
+                    <span style={{
+                      display: 'inline-block', width: 6, height: 6, borderRadius: 999,
+                      background: '#6f8f6c', marginRight: 6, verticalAlign: 'middle',
+                    }} />
+                    Free in 22 min
+                  </div>
+                  <button onClick={() => setSheetRoom(r.name)} style={{
+                    background: r.dark ? FOMO_PINK : FOMO_INK,
+                    color: r.dark ? FOMO_INK : '#fff',
+                    border: 'none', borderRadius: 999,
+                    padding: '9px 16px', fontFamily: 'DM Sans, system-ui',
+                    fontSize: 12, fontWeight: 600, cursor: 'pointer',
+                    display: 'inline-flex', alignItems: 'center', gap: 6,
+                  }}>
+                    Book now
+                    <Icon name="arrow_right" size={13} />
+                  </button>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* ============ Backdrop ============ */}
+      {sheetRoom && (
+        <div onClick={closeSheet} style={{
+          position: 'absolute', inset: 0,
+          background: 'rgba(17,17,17,0.45)',
+          zIndex: 89, backdropFilter: 'blur(2px)',
+        }} />
+      )}
+
+      {/* ============ Bottom sheet ============ */}
+      {sheetRoom && (
+        <div style={{
+          position: 'absolute', bottom: 84, left: 0, right: 0,
+          background: '#fefcf6', borderRadius: '24px 24px 0 0',
+          boxShadow: '0 -24px 60px rgba(17,17,17,0.22)',
+          paddingBottom: 20, zIndex: 90,
+          borderTop: `1px solid ${FOMO_BORDER}`,
+          maxHeight: 'calc(100% - 84px)', overflowY: 'auto',
+        }}>
+          {/* drag handle */}
+          <div style={{ display: 'flex', justifyContent: 'center', paddingTop: 14 }}>
+            <div style={{ width: 36, height: 4, background: FOMO_BORDER, borderRadius: 999 }} />
+          </div>
+          {/* close button — equal distance from top and right */}
+          <button onClick={closeSheet} style={{
+            position: 'absolute', top: 14, right: 14,
+            width: 30, height: 30, borderRadius: 999,
+            background: '#f0ead8', border: 'none', cursor: 'pointer',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            color: FOMO_INK,
+          }}>
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+              <path d="M18 6L6 18M6 6l12 12"/>
+            </svg>
+          </button>
+
+          <div style={{ padding: '14px 22px 0' }}>
+            {/* Room name */}
+            <Eyebrow style={{ color: FOMO_INK_2 }}>Book a room</Eyebrow>
+            <div style={{
+              fontFamily: '"DM Serif Display", serif', fontSize: 24,
+              lineHeight: 1.1, color: FOMO_INK, marginTop: 4, marginBottom: 20,
+            }}>
+              <em style={{ fontStyle: 'italic' }}>{sheetRoom}</em>
+            </div>
+
+            {/* ---- Date picker ---- */}
+            <Eyebrow style={{ color: FOMO_INK_2, fontSize: 9, marginBottom: 10 }}>Select date</Eyebrow>
+            <div style={{
+              display: 'flex', gap: 8, overflowX: 'auto',
+              scrollbarWidth: 'none', msOverflowStyle: 'none',
+              paddingBottom: 4,
+            }}>
+              {days.map((d, i) => {
+                const isToday = i === 0;
+                const isSel = d.toDateString() === selectedDate.toDateString();
+                return (
+                  <button key={i} onClick={() => setSelectedDate(d)} style={{
+                    flex: '0 0 auto', display: 'flex', flexDirection: 'column',
+                    alignItems: 'center', gap: 4,
+                    padding: '10px 12px', borderRadius: 14,
+                    background: isSel ? FOMO_INK : '#fff',
+                    border: `1px solid ${isSel ? FOMO_INK : FOMO_BORDER}`,
+                    cursor: 'pointer', minWidth: 52,
+                    transition: 'all .15s',
+                  }}>
+                    <span style={{
+                      fontSize: 10, fontWeight: 600, letterSpacing: '0.08em',
+                      color: isSel ? 'rgba(255,255,255,0.7)' : FOMO_INK_2,
+                      textTransform: 'uppercase',
+                    }}>{isToday ? 'Today' : DAY_ABBR[d.getDay()]}</span>
+                    <span style={{
+                      fontFamily: '"DM Serif Display", serif', fontSize: 20,
+                      lineHeight: 1, color: isSel ? '#fff' : FOMO_INK,
+                    }}>{d.getDate()}</span>
+                  </button>
+                );
+              })}
+            </div>
+
+            {/* ---- Time slots ---- */}
+            <Eyebrow style={{ color: FOMO_INK_2, fontSize: 9, marginTop: 18, marginBottom: 10 }}>Select time</Eyebrow>
+            <div style={{
+              display: 'flex', gap: 8, overflowX: 'auto',
+              scrollbarWidth: 'none', msOverflowStyle: 'none',
+            }}>
+              {slots.map(s => {
+                const isTaken = taken.has(s);
+                const isActive = slot === s;
+                return (
+                  <button key={s} disabled={isTaken}
+                    onClick={() => !isTaken && setSlot(s)} style={{
+                      flex: '0 0 auto',
+                      padding: '10px 14px', borderRadius: 999,
+                      background: isActive ? FOMO_INK : (isTaken ? 'transparent' : '#fff'),
+                      color: isActive ? '#fff' : (isTaken ? FOMO_INK_2 : FOMO_INK),
+                      border: isActive ? `1px solid ${FOMO_INK}` : `1px solid ${isTaken ? FOMO_BORDER : FOMO_INK}`,
+                      fontFamily: 'DM Sans, system-ui', fontSize: 13, fontWeight: 500,
+                      cursor: isTaken ? 'not-allowed' : 'pointer',
+                      opacity: isTaken ? 0.4 : 1,
+                      textDecoration: isTaken ? 'line-through' : 'none',
+                      transition: 'all .15s',
+                  }}>
+                    {s}
+                  </button>
+                );
+              })}
+            </div>
+
+            {/* ---- Duration stepper ---- */}
+            <div style={{
+              display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+              marginTop: 16, padding: '12px 14px', background: '#f9f4e8', borderRadius: 12,
+            }}>
+              <div>
+                <div style={{ fontSize: 13, fontWeight: 500, color: FOMO_INK }}>Duration</div>
+                <div style={{ fontSize: 11, color: FOMO_INK_2, marginTop: 1 }}>30 min increments</div>
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                <button onClick={() => setDuration(Math.max(30, duration - 30))} style={{
+                  width: 28, height: 28, borderRadius: 999, background: '#fff',
+                  border: `1px solid ${FOMO_INK}`, cursor: 'pointer',
+                  display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
+                }}><Icon name="minus" size={12} /></button>
+                <span style={{
+                  fontFamily: '"DM Serif Display", serif', fontSize: 22, color: FOMO_INK,
+                  minWidth: 56, textAlign: 'center',
+                }}>{duration}m</span>
+                <button onClick={() => setDuration(Math.min(180, duration + 30))} style={{
+                  width: 28, height: 28, borderRadius: 999, background: FOMO_INK,
+                  border: 'none', color: '#fff', cursor: 'pointer',
+                  display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
+                }}><Icon name="plus" size={12} color="#fff" /></button>
+              </div>
+            </div>
+
+            {/* ---- Catering toggle ---- */}
+            <div style={{
+              display: 'flex', alignItems: 'center', gap: 12, marginTop: 10,
+              padding: '12px 14px', background: catering ? FOMO_PINK : '#f9f4e8',
+              borderRadius: 12, transition: 'background .2s',
+            }}>
+              <Icon name="croissant" size={20} />
+              <div style={{ flex: 1, minWidth: 0 }}>
+                <div style={{ fontSize: 13, fontWeight: 500, color: FOMO_INK }}>Add Soi21 meeting catering</div>
+                <div style={{ fontSize: 11, color: FOMO_INK_2, marginTop: 1 }}>Pastries · espresso · 140 NOK / pp</div>
+              </div>
+              <Toggle checked={catering} onChange={setCatering} />
+            </div>
+
+            {/* ---- CTA ---- */}
+            <PrimaryButton fullWidth size="lg" style={{ marginTop: 14 }} icon="arrow_right">
+              Confirm · {DAY_ABBR[selectedDate.getDay()]} {selectedDate.getDate()} · {slot}{catering ? ' · + catering' : ''}
+            </PrimaryButton>
+          </div>
+        </div>
+      )}
+
+      {!onNavChange && <BottomNav active={navTab} onChange={setNavTab} />}
+      {!onNavChange && <HomeIndicator />}
+    </Screen>
+  );
+}
+
+Object.assign(window, { RoomsScreen });
+
+
+// Soi21 — Food & Bar ordering
+// Segmented tabs: Lunch / Café & Bar / My Tab
+// 2-col menu grid with allergy tags + add-to-cart button
+// Sticky bottom: cart summary + slide-to-pay (Vipps)
+
+function Soi21Screen({ navTab: navTabProp, onNavChange } = {}) {
+  const [_navLocal, _setNavLocal] = React.useState('food');
+  const navTab = navTabProp !== undefined ? navTabProp : _navLocal;
+  const setNavTab = onNavChange || _setNavLocal;
+  const [tab, setTab] = React.useState('lunch');
+  const [cart, setCart] = React.useState({ thaiCurry: 1, vinSundae: 1 });
+  const [slide, setSlide] = React.useState(0); // 0..1
+  const [orderExpanded, setOrderExpanded] = React.useState(false);
+
+  const itemsByTab = {
+    lunch: [
+      { id: 'thaiCurry', name: 'Soi21 Daily Thai Curry', price: 145, tone: 'curry',  allergy: ['GF'], decor: 'circle', tag: 'Chef pick' },
+      { id: 'beetGravlax', name: 'Beet-Cured Gravlax Bowl', price: 175, tone: 'rose',  allergy: ['GF','DF'], decor: 'palm' },
+      { id: 'banhMi',    name: 'Crispy Tofu Bánh Mì', price: 135, tone: 'olive',  allergy: ['VG'], decor: 'stripes' },
+      { id: 'sourdoughCk', name: 'Sourdough Pizza of the Day', price: 165, tone: 'sand',   allergy: ['V'], decor: 'circle' },
+      { id: 'pokeBowl',  name: 'Yellowfin Poke Bowl', price: 195, tone: 'aqua',   allergy: ['GF','DF'], decor: 'palm' },
+      { id: 'grilledCheese', name: 'Truffle Grilled Cheese', price: 125, tone: 'cream',  allergy: ['V'], decor: 'stripes' },
+    ],
+    cafe: [
+      { id: 'flatWhite', name: 'Oat Flat White', price: 49, tone: 'porter', allergy: ['VG'], decor: 'circle' },
+      { id: 'matchaLat', name: 'Iced Matcha Latte', price: 65, tone: 'forest', allergy: ['VG'], decor: 'palm' },
+      { id: 'pinaCol',   name: 'Piña Colada (frozen)', price: 145, tone: 'sand', allergy: [], decor: 'stripes' },
+      { id: 'natWine',   name: 'Natural Wine — Glass', price: 125, tone: 'rose', allergy: [], decor: 'circle' },
+      { id: 'vinSundae', name: 'Vin Santo Sundae', price: 95, tone: 'beach', allergy: ['V'], decor: 'palm' },
+      { id: 'negroni',   name: 'Cardamom Negroni', price: 165, tone: 'leather', allergy: [], decor: 'circle' },
+    ],
+    tab: [],
+  };
+
+  const cartItems = Object.entries(cart).filter(([, q]) => q > 0).map(([id, q]) => {
+    const item = [...itemsByTab.lunch, ...itemsByTab.cafe].find(i => i.id === id);
+    return item ? { ...item, qty: q } : null;
+  }).filter(Boolean);
+  const cartCount = cartItems.reduce((s, i) => s + i.qty, 0);
+  const cartTotal = cartItems.reduce((s, i) => s + i.price * i.qty, 0);
+
+  const addToCart = (id) => setCart(c => ({ ...c, [id]: (c[id] || 0) + 1 }));
+  const removeFromCart = (id) => setCart(c => ({ ...c, [id]: Math.max(0, (c[id] || 0) - 1) }));
+
+  // Table booking state
+  const tableToday = new Date();
+  const tableDays = Array.from({ length: 7 }, (_, i) => { const d = new Date(tableToday); d.setDate(tableToday.getDate() + i); return d; });
+  const TABLE_DAY = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+  const [tableDate, setTableDate] = React.useState(tableDays[0]);
+  const [tableTime, setTableTime] = React.useState('12:00');
+  const [tableGuests, setTableGuests] = React.useState(2);
+  const tableSlots = ['11:30','12:00','12:30','13:00','13:30','18:00','18:30','19:00','19:30'];
+  const tableTaken = new Set(['12:30','19:00']);
+  const [tableSheet, setTableSheet] = React.useState(false);
+  const closeTableSheet = () => setTableSheet(false);
+
+  const items = tab === 'tab' ? [] : (itemsByTab[tab] || []);
+
+  // Slide-to-pay drag handler
+  const trackRef = React.useRef(null);
+  const startDrag = (e) => {
+    e.preventDefault();
+    const track = trackRef.current;
+    if (!track) return;
+    const rect = track.getBoundingClientRect();
+    const max = rect.width - 56;
+    const move = (ev) => {
+      const x = (ev.touches ? ev.touches[0].clientX : ev.clientX) - rect.left - 28;
+      const v = Math.max(0, Math.min(1, x / max));
+      setSlide(v);
+    };
+    const up = () => {
+      window.removeEventListener('mousemove', move);
+      window.removeEventListener('mouseup', up);
+      window.removeEventListener('touchmove', move);
+      window.removeEventListener('touchend', up);
+      setSlide(curr => (curr > 0.9 ? 1 : 0));
+    };
+    window.addEventListener('mousemove', move);
+    window.addEventListener('mouseup', up);
+    window.addEventListener('touchmove', move);
+    window.addEventListener('touchend', up);
+  };
+
+  const allergyColor = { V:'#738c70', VG:'#738c70', GF:'#c98a3a', DF:'#5b6e7a' };
+
+  return (
+    <Screen>
+      <StatusBar />
+      {/* ============ Top header ============ */}
+      <div style={{ padding: '8px 22px 0', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+        <img src="fomo/assets/logo-fomo-black-sm.png" style={{ height: 22 }} alt="FOMO" />
+        <Eyebrow style={{ color: FOMO_INK_2, fontSize: 9.5 }}>Soi21 · Order</Eyebrow>
+      </div>
+      <Hairline style={{ margin: '10px 22px 0' }} />
+
+      <div style={{
+        height: 'calc(100% - 30px - 33px)', overflow: 'auto',
+        paddingBottom: cartCount > 0 ? (orderExpanded ? 510 : 270) : 90,
+      }}>
+        {/* ============ Title ============ */}
+        <div style={{ padding: '18px 22px 0' }}>
+          <Eyebrow style={{ color: FOMO_INK_2 }}>The Soi21 kitchen</Eyebrow>
+          <h1 style={{
+            fontFamily: '"DM Serif Display", serif', fontWeight: 400,
+            fontSize: 30, lineHeight: 1.05, letterSpacing: '-0.02em',
+            color: FOMO_INK, margin: '8px 0 4px',
+          }}>
+            Sun-soaked dishes,<br/>
+            <em style={{ fontStyle: 'italic' }}>pre-ordered.</em>
+          </h1>
+          <div style={{
+            display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+            marginTop: 10,
+          }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 11.5, color: FOMO_INK_2, fontWeight: 500 }}>
+              <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4 }}>
+                <span style={{ width: 7, height: 7, borderRadius: 999, background: '#6f8f6c' }} /> Open
+              </span>
+              <span>·</span><span>Pickup in 12 min</span>
+            </div>
+            <button onClick={() => setTableSheet(true)} style={{
+              background: FOMO_INK, color: '#fff', border: 'none',
+              borderRadius: 999, padding: '11px 18px', cursor: 'pointer',
+              fontFamily: 'DM Sans, system-ui', fontSize: 13, fontWeight: 600,
+              display: 'inline-flex', alignItems: 'center', gap: 7,
+            }}>
+              <Icon name="calendar" size={15} color="#fff" />
+              Book a table
+            </button>
+          </div>
+        </div>
+
+        {/* ============ Segmented tabs ============ */}
+        <div style={{
+          margin: '18px 22px 0',
+          background: '#fff',
+          border: `1px solid ${FOMO_INK}`, borderRadius: 999,
+          padding: 4, display: 'grid', gridTemplateColumns: '1fr 1fr 1fr',
+          position: 'relative',
+        }}>
+          {[
+            { id: 'lunch', label: 'Lunch menu' },
+            { id: 'cafe', label: 'Café & Bar' },
+            { id: 'tab', label: 'My tab' },
+          ].map(t => (
+            <button key={t.id} onClick={() => setTab(t.id)} style={{
+              background: tab === t.id ? FOMO_INK : 'transparent',
+              color: tab === t.id ? '#fff' : FOMO_INK,
+              border: 'none', cursor: 'pointer',
+              padding: '9px 4px', borderRadius: 999,
+              fontFamily: 'DM Sans, system-ui', fontSize: 12, fontWeight: 500,
+              transition: 'all .2s',
+            }}>{t.label}</button>
+          ))}
+        </div>
+
+        {tab === 'tab' ? (
+          // ===== My Tab view =====
+          <div style={{ padding: '20px 22px 0' }}>
+            <Eyebrow style={{ color: FOMO_INK_2 }}>This week · open tab</Eyebrow>
+            <div style={{
+              fontFamily: '"DM Serif Display", serif', fontSize: 56,
+              color: FOMO_INK, lineHeight: 1, marginTop: 6, letterSpacing: '-0.02em',
+            }}>
+              847<span style={{ fontSize: 22 }}> NOK</span>
+            </div>
+            <div style={{ fontSize: 12, color: FOMO_INK_2, marginTop: 6 }}>
+              7 orders · settled every Friday via Vipps
+            </div>
+            <div style={{ marginTop: 18, display: 'flex', flexDirection: 'column' }}>
+              {[
+                { d: 'Mon · 12:15', i: 'Beet-Cured Gravlax Bowl', p: 175 },
+                { d: 'Mon · 15:40', i: 'Oat Flat White', p: 49 },
+                { d: 'Tue · 11:30', i: 'Soi21 Daily Thai Curry', p: 145 },
+                { d: 'Wed · 09:10', i: 'Iced Matcha Latte', p: 65 },
+                { d: 'Wed · 17:00', i: 'Cardamom Negroni × 2', p: 330 },
+              ].map((r, i) => (
+                <div key={i} style={{
+                  display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+                  padding: '12px 0', borderTop: i === 0 ? `1px solid ${FOMO_HAIRLINE}` : `1px solid ${FOMO_BORDER}`,
+                }}>
+                  <div>
+                    <div style={{ fontSize: 13, fontWeight: 500, color: FOMO_INK }}>{r.i}</div>
+                    <div style={{ fontSize: 11, color: FOMO_INK_2, marginTop: 1 }}>{r.d}</div>
+                  </div>
+                  <div style={{ fontFamily: '"DM Serif Display", serif', fontSize: 18 }}>{r.p}</div>
+                </div>
+              ))}
+            </div>
+          </div>
+        ) : (
+          // ===== Lunch / Café & Bar grid =====
+          <>
+            <div style={{
+              display: 'flex', gap: 7, padding: '14px 22px 0',
+              overflowX: 'auto', scrollbarWidth: 'none',
+            }}>
+              {['All', 'Chef pick', 'Vegetarian', 'Gluten-free', 'Spicy'].map((t, i) => (
+                <Pill key={t} active={i === 0}>{t}</Pill>
+              ))}
+            </div>
+
+            <div style={{
+              padding: '14px 22px 0',
+              display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12,
+            }}>
+              {items.map((item) => {
+                const inCart = cart[item.id] || 0;
+                return (
+                  <div key={item.id} style={{
+                    background: '#fff', borderRadius: 12, overflow: 'hidden',
+                    border: `1px solid ${FOMO_BORDER}`,
+                  }}>
+                    <div style={{ position: 'relative' }}>
+                      <ImagePlate tone={item.tone} height={120} decor={item.decor} />
+                      {item.tag && (
+                        <span style={{
+                          position: 'absolute', top: 8, left: 8,
+                          background: FOMO_INK, color: '#fff',
+                          fontSize: 9, fontWeight: 600, letterSpacing: '0.18em',
+                          textTransform: 'uppercase', padding: '4px 8px', borderRadius: 999,
+                        }}>{item.tag}</span>
+                      )}
+                      {/* Qty stepper (overlaps bottom-right) */}
+                      {inCart === 0 ? (
+                        <button onClick={() => addToCart(item.id)} style={{
+                          position: 'absolute', bottom: -14, right: 10,
+                          width: 36, height: 36, borderRadius: 999,
+                          background: FOMO_INK, color: '#fff',
+                          border: '2px solid #fefcf6', cursor: 'pointer',
+                          display: 'flex', alignItems: 'center', justifyContent: 'center',
+                          boxShadow: '0 4px 12px rgba(17,17,17,0.15)',
+                          fontSize: 20, fontWeight: 400, lineHeight: 1,
+                        }}>+</button>
+                      ) : (
+                        <div style={{
+                          position: 'absolute', bottom: -14, right: 8,
+                          display: 'flex', alignItems: 'center',
+                          background: FOMO_INK, borderRadius: 999,
+                          border: '2px solid #fefcf6',
+                          boxShadow: '0 4px 12px rgba(17,17,17,0.15)',
+                          overflow: 'hidden',
+                        }}>
+                          <button onClick={() => removeFromCart(item.id)} style={{
+                            width: 30, height: 30, background: 'transparent', border: 'none',
+                            color: '#fff', cursor: 'pointer', fontSize: 18, lineHeight: 1,
+                            display: 'flex', alignItems: 'center', justifyContent: 'center',
+                          }}>−</button>
+                          <span style={{
+                            fontFamily: '"DM Serif Display", serif', fontSize: 15,
+                            color: '#fff', minWidth: 18, textAlign: 'center', lineHeight: 1,
+                          }}>{inCart}</span>
+                          <button onClick={() => addToCart(item.id)} style={{
+                            width: 30, height: 30, background: 'transparent', border: 'none',
+                            color: '#fff', cursor: 'pointer', fontSize: 18, lineHeight: 1,
+                            display: 'flex', alignItems: 'center', justifyContent: 'center',
+                          }}>+</button>
+                        </div>
+                      )}
+                    </div>
+                    <div style={{ padding: '14px 12px 12px' }}>
+                      <div style={{
+                        fontFamily: 'DM Sans, system-ui', fontSize: 13, fontWeight: 500,
+                        lineHeight: 1.2, color: FOMO_INK, minHeight: 30,
+                      }}>{item.name}</div>
+                      <div style={{
+                        display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+                        marginTop: 8,
+                      }}>
+                        <div style={{ fontFamily: '"DM Serif Display", serif', fontSize: 16, color: FOMO_INK }}>
+                          {item.price} <span style={{ fontSize: 10, color: FOMO_INK_2, letterSpacing: '0.18em' }}>NOK</span>
+                        </div>
+                        <div style={{ display: 'flex', gap: 3 }}>
+                          {item.allergy.map(a => (
+                            <span key={a} style={{
+                              fontSize: 8.5, fontWeight: 700, letterSpacing: '0.06em',
+                              padding: '2px 5px', borderRadius: 3,
+                              border: `1px solid ${allergyColor[a] || FOMO_INK_2}`,
+                              color: allergyColor[a] || FOMO_INK_2,
+                            }}>{a}</span>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </>
+        )}
+      </div>
+
+      {/* ============ Book-a-table backdrop + sheet ============ */}
+      {tableSheet && (
+        <div onClick={closeTableSheet} style={{
+          position: 'absolute', inset: 0,
+          background: 'rgba(17,17,17,0.45)', zIndex: 89,
+          backdropFilter: 'blur(2px)',
+        }} />
+      )}
+      {tableSheet && (
+        <div style={{
+          position: 'absolute', bottom: 84, left: 0, right: 0,
+          background: '#fefcf6', borderRadius: '24px 24px 0 0',
+          boxShadow: '0 -24px 60px rgba(17,17,17,0.22)',
+          paddingBottom: 20, zIndex: 90,
+          borderTop: `1px solid ${FOMO_BORDER}`,
+          maxHeight: 'calc(100% - 84px)', overflowY: 'auto',
+        }}>
+          {/* drag handle */}
+          <div style={{ display: 'flex', justifyContent: 'center', paddingTop: 14 }}>
+            <div style={{ width: 36, height: 4, background: FOMO_BORDER, borderRadius: 999 }} />
+          </div>
+          {/* close button */}
+          <button onClick={closeTableSheet} style={{
+            position: 'absolute', top: 14, right: 14,
+            width: 30, height: 30, borderRadius: 999,
+            background: '#f0ead8', border: 'none', cursor: 'pointer',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+          }}>
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke={FOMO_INK} strokeWidth="2.5" strokeLinecap="round">
+              <path d="M18 6L6 18M6 6l12 12"/>
+            </svg>
+          </button>
+
+          <div style={{ padding: '14px 22px 0' }}>
+            <Eyebrow style={{ color: FOMO_INK_2 }}>Reserve a spot</Eyebrow>
+            <div style={{
+              fontFamily: '"DM Serif Display", serif', fontSize: 24,
+              color: FOMO_INK, marginTop: 4, marginBottom: 20, lineHeight: 1.1,
+            }}>
+              <em style={{ fontStyle: 'italic' }}>Book a table</em>
+            </div>
+
+            {/* Date strip */}
+            <Eyebrow style={{ color: FOMO_INK_2, fontSize: 9, marginBottom: 10 }}>Date</Eyebrow>
+            <div style={{ display: 'flex', gap: 8, overflowX: 'auto', scrollbarWidth: 'none', paddingBottom: 4 }}>
+              {tableDays.map((d, i) => {
+                const isSel = d.toDateString() === tableDate.toDateString();
+                return (
+                  <button key={i} onClick={() => setTableDate(d)} style={{
+                    flex: '0 0 auto', display: 'flex', flexDirection: 'column',
+                    alignItems: 'center', gap: 4, padding: '10px 12px', borderRadius: 14,
+                    background: isSel ? FOMO_INK : '#fff',
+                    border: `1px solid ${isSel ? FOMO_INK : FOMO_BORDER}`,
+                    cursor: 'pointer', minWidth: 52, transition: 'all .15s',
+                  }}>
+                    <span style={{ fontSize: 10, fontWeight: 600, letterSpacing: '0.08em', textTransform: 'uppercase', color: isSel ? 'rgba(255,255,255,0.6)' : FOMO_INK_2 }}>
+                      {i === 0 ? 'Today' : TABLE_DAY[d.getDay()]}
+                    </span>
+                    <span style={{ fontFamily: '"DM Serif Display", serif', fontSize: 20, lineHeight: 1, color: isSel ? '#fff' : FOMO_INK }}>
+                      {d.getDate()}
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
+
+            {/* Time slots */}
+            <Eyebrow style={{ color: FOMO_INK_2, fontSize: 9, marginTop: 18, marginBottom: 10 }}>Time</Eyebrow>
+            <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+              {tableSlots.map(s => {
+                const isTaken = tableTaken.has(s);
+                const isSel = tableTime === s;
+                return (
+                  <button key={s} disabled={isTaken} onClick={() => !isTaken && setTableTime(s)} style={{
+                    padding: '10px 16px', borderRadius: 999,
+                    background: isSel ? FOMO_INK : (isTaken ? 'transparent' : '#fff'),
+                    color: isSel ? '#fff' : (isTaken ? FOMO_INK_2 : FOMO_INK),
+                    border: `1px solid ${isSel ? FOMO_INK : isTaken ? FOMO_BORDER : FOMO_INK}`,
+                    fontFamily: 'DM Sans, system-ui', fontSize: 13, fontWeight: 500,
+                    cursor: isTaken ? 'not-allowed' : 'pointer',
+                    opacity: isTaken ? 0.4 : 1,
+                    textDecoration: isTaken ? 'line-through' : 'none',
+                    transition: 'all .15s',
+                  }}>{s}</button>
+                );
+              })}
+            </div>
+
+            {/* Guests */}
+            <Eyebrow style={{ color: FOMO_INK_2, fontSize: 9, marginTop: 18, marginBottom: 10 }}>Guests</Eyebrow>
+            <div style={{
+              display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+              padding: '14px 16px', background: '#fff', borderRadius: 14,
+              border: `1px solid ${FOMO_BORDER}`,
+            }}>
+              <div>
+                <div style={{ fontSize: 13, fontWeight: 500, color: FOMO_INK }}>Party size</div>
+                <div style={{ fontSize: 11, color: FOMO_INK_2, marginTop: 1 }}>Tables seat up to 10</div>
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
+                <button onClick={() => setTableGuests(g => Math.max(1, g - 1))} style={{
+                  width: 30, height: 30, borderRadius: 999,
+                  background: tableGuests <= 1 ? '#f0ead8' : '#fff',
+                  border: `1px solid ${tableGuests <= 1 ? FOMO_BORDER : FOMO_INK}`,
+                  cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  color: tableGuests <= 1 ? FOMO_INK_2 : FOMO_INK,
+                }}><Icon name="minus" size={12} /></button>
+                <span style={{ fontFamily: '"DM Serif Display", serif', fontSize: 24, color: FOMO_INK, minWidth: 28, textAlign: 'center' }}>
+                  {tableGuests}
+                </span>
+                <button onClick={() => setTableGuests(g => Math.min(10, g + 1))} style={{
+                  width: 30, height: 30, borderRadius: 999,
+                  background: tableGuests >= 10 ? '#f0ead8' : FOMO_INK,
+                  border: 'none', cursor: 'pointer',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                }}><Icon name="plus" size={12} color={tableGuests >= 10 ? FOMO_INK_2 : '#fff'} /></button>
+              </div>
+            </div>
+
+            {/* Summary */}
+            <div style={{
+              marginTop: 12, padding: '14px 16px', borderRadius: 12,
+              background: FOMO_PINK, fontSize: 12, color: FOMO_INK, lineHeight: 1.5,
+            }}>
+              <Eyebrow style={{ fontSize: 9.5, marginBottom: 4 }}>Your reservation</Eyebrow>
+              <strong style={{ fontWeight: 600 }}>{tableGuests} {tableGuests === 1 ? 'guest' : 'guests'}</strong>
+              {' · '}{TABLE_DAY[tableDate.getDay()]} {tableDate.getDate()} {tableDate.toLocaleString('default', { month: 'short' })}
+              {' · '}<strong style={{ fontWeight: 600 }}>{tableTime}</strong>
+            </div>
+            <PrimaryButton fullWidth size="lg" style={{ marginTop: 12 }} icon="arrow_right">
+              Reserve table
+            </PrimaryButton>
+          </div>
+        </div>
+      )}
+
+      {/* ============ Sticky cart bar ============ */}
+      {cartCount > 0 && !tableSheet && (
+        <div style={{
+          position: 'absolute', bottom: 84, left: 0, right: 0,
+          background: '#fefcf6', borderTop: `1px solid ${FOMO_HAIRLINE}`,
+          zIndex: 90, boxShadow: '0 -8px 32px rgba(17,17,17,0.10)',
+          borderRadius: orderExpanded ? '20px 20px 0 0' : 0,
+          transition: 'border-radius .2s',
+        }}>
+          {/* ---- Tappable summary row ---- */}
+          <button onClick={() => setOrderExpanded(e => !e)} style={{
+            width: '100%', background: 'transparent', border: 'none',
+            cursor: 'pointer', padding: '14px 22px 12px',
+            display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+          }}>
+            <div style={{ textAlign: 'left' }}>
+              <Eyebrow style={{ color: FOMO_INK_2, fontSize: 9.5 }}>Your order</Eyebrow>
+              <div style={{ fontFamily: 'DM Sans, system-ui', fontSize: 14, fontWeight: 500, color: FOMO_INK, marginTop: 2 }}>
+                {cartCount} {cartCount === 1 ? 'item' : 'items'} · <span style={{ fontFamily: '"DM Serif Display", serif', fontSize: 18 }}>{cartTotal}</span> NOK
+              </div>
+            </div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+              {!orderExpanded && (
+                <div style={{ display: 'flex' }}>
+                  {cartItems.slice(0, 3).map((c, i) => (
+                    <div key={c.id} style={{
+                      width: 28, height: 28, borderRadius: 6, overflow: 'hidden',
+                      border: '2px solid #fefcf6', marginLeft: i === 0 ? 0 : -10,
+                    }}>
+                      <ImagePlate tone={c.tone} height={28} />
+                    </div>
+                  ))}
+                </div>
+              )}
+              <div style={{
+                width: 28, height: 28, borderRadius: 999, background: '#f0ead8',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                transition: 'transform .2s',
+                transform: orderExpanded ? 'rotate(0deg)' : 'rotate(180deg)',
+              }}>
+                <Icon name="chevron_down" size={14} color={FOMO_INK} />
+              </div>
+            </div>
+          </button>
+
+          {/* ---- Expanded item list ---- */}
+          {orderExpanded && (
+            <div style={{ padding: '0 22px', maxHeight: 260, overflowY: 'auto' }}>
+              <div style={{ borderTop: `1px solid ${FOMO_BORDER}` }}>
+                {cartItems.map((c, i) => (
+                  <div key={c.id} style={{
+                    display: 'flex', alignItems: 'center', gap: 12,
+                    padding: '12px 0',
+                    borderBottom: `1px solid ${FOMO_BORDER}`,
+                  }}>
+                    {/* thumbnail */}
+                    <div style={{ width: 40, height: 40, borderRadius: 8, overflow: 'hidden', flexShrink: 0 }}>
+                      <ImagePlate tone={c.tone} height={40} />
+                    </div>
+                    {/* name + price */}
+                    <div style={{ flex: 1, minWidth: 0 }}>
+                      <div style={{ fontSize: 13, fontWeight: 500, color: FOMO_INK, lineHeight: 1.2 }}>{c.name}</div>
+                      <div style={{ fontSize: 11, color: FOMO_INK_2, marginTop: 2 }}>{c.price * c.qty} NOK</div>
+                    </div>
+                    {/* stepper */}
+                    <div style={{
+                      display: 'flex', alignItems: 'center', gap: 0,
+                      background: '#f0ead8', borderRadius: 999, overflow: 'hidden',
+                    }}>
+                      <button onClick={() => removeFromCart(c.id)} style={{
+                        width: 30, height: 30, background: 'transparent', border: 'none',
+                        cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center',
+                        color: FOMO_INK, fontSize: 16,
+                      }}>−</button>
+                      <span style={{ fontFamily: '"DM Serif Display", serif', fontSize: 15, color: FOMO_INK, minWidth: 16, textAlign: 'center' }}>
+                        {c.qty}
+                      </span>
+                      <button onClick={() => addToCart(c.id)} style={{
+                        width: 30, height: 30, background: 'transparent', border: 'none',
+                        cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center',
+                        color: FOMO_INK, fontSize: 16,
+                      }}>+</button>
+                    </div>
+                    {/* remove */}
+                    <button onClick={() => setCart(ct => { const n = {...ct}; delete n[c.id]; return n; })} style={{
+                      width: 26, height: 26, borderRadius: 999, background: 'transparent',
+                      border: `1px solid ${FOMO_BORDER}`, cursor: 'pointer',
+                      display: 'flex', alignItems: 'center', justifyContent: 'center',
+                      color: FOMO_INK_2, flexShrink: 0,
+                    }}>
+                      <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+                        <path d="M18 6L6 18M6 6l12 12"/>
+                      </svg>
+                    </button>
+                  </div>
+                ))}
+              </div>
+              {/* total row */}
+              <div style={{
+                display: 'flex', justifyContent: 'space-between', alignItems: 'baseline',
+                padding: '10px 0 14px',
+              }}>
+                <span style={{ fontSize: 12, color: FOMO_INK_2, fontWeight: 500 }}>Total</span>
+                <span style={{ fontFamily: '"DM Serif Display", serif', fontSize: 22, color: FOMO_INK }}>
+                  {cartTotal} <span style={{ fontSize: 11, color: FOMO_INK_2 }}>NOK</span>
+                </span>
+              </div>
+            </div>
+          )}
+
+          {/* ---- Slide-to-pay ---- */}
+          <div style={{ padding: orderExpanded ? '0 22px 10px' : '0 22px 8px' }}>
+            <div ref={trackRef} style={{
+              position: 'relative', height: 52, borderRadius: 999,
+              background: FOMO_INK, overflow: 'hidden', userSelect: 'none',
+            }}>
+              <div style={{
+                position: 'absolute', top: 0, bottom: 0, left: 0,
+                width: `calc(${slide * 100}% + 28px)`,
+                background: '#ff5b24',
+                transition: slide === 0 || slide === 1 ? 'width .2s' : 'none',
+              }} />
+              <div style={{
+                position: 'absolute', inset: 0, display: 'flex',
+                alignItems: 'center', justifyContent: 'center',
+                color: '#fff', fontFamily: 'DM Sans, system-ui',
+                fontSize: 13, fontWeight: 600, letterSpacing: '0.04em',
+                opacity: 1 - slide * 1.3,
+              }}>
+                {slide >= 0.95 ? 'Paying…' : 'Slide to pre-order & pay via'}
+                <span style={{ marginLeft: 6, fontFamily: '"DM Serif Display", serif', fontSize: 16, fontStyle: 'italic' }}>Vipps</span>
+              </div>
+              <button onMouseDown={startDrag} onTouchStart={startDrag} style={{
+                position: 'absolute', top: 4, height: 44, width: 44,
+                left: `calc(${slide * 100}% + ${slide === 1 ? -48 : 4}px)`,
+                transition: slide === 0 || slide === 1 ? 'left .2s' : 'none',
+                borderRadius: 999, background: '#fff', border: 'none', cursor: 'grab',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                boxShadow: '0 2px 8px rgba(0,0,0,0.2)',
+              }}>
+                <Icon name={slide >= 0.95 ? 'check' : 'arrow_right'} size={20} color="#ff5b24" />
+              </button>
+            </div>
+          </div>
+          {/* ---- Add to tab link ---- */}
+          <div style={{ textAlign: 'center', paddingTop: 12, paddingBottom: 14 }}>
+            <button onClick={() => setNavTab('tab')} style={{
+              background: 'transparent', border: 'none', cursor: 'pointer',
+              fontFamily: 'DM Sans, system-ui', fontSize: 12, fontWeight: 600,
+              color: FOMO_INK_2, letterSpacing: '0.04em',
+              textDecoration: 'none',
+            }}>
+              Add to tab instead
+            </button>
+          </div>
+        </div>
+      )}
+
+      {!onNavChange && <BottomNav active={navTab} onChange={setNavTab} />}
+      {!onNavChange && <HomeIndicator />}
+    </Screen>
+  );
+}
+
+Object.assign(window, { Soi21Screen });
+
+
+// Support — Concierge & Hospitality (Raise a Request)
+// Category, location pickers + textarea with dashed dropzone + primary CTA
+
+function SupportScreen({ navTab: navTabProp, onNavChange } = {}) {
+  const [_navLocal, _setNavLocal] = React.useState('support');
+  const navTab = navTabProp !== undefined ? navTabProp : _navLocal;
+  const setNavTab = onNavChange || _setNavLocal;
+  const [category, setCategory] = React.useState('it');
+  const [building, setBuilding] = React.useState('West');
+  const [office, setOffice] = React.useState('3F · Studio 304');
+  const [desc, setDesc] = React.useState('');
+  const [attachments, setAttachments] = React.useState([
+    { name: 'IMG_3041.jpg', size: '1.2 MB', tone: 'sand' },
+  ]);
+
+  const categories = [
+    { id: 'it',       label: 'IT & Wi-Fi',        icon: 'wifi' },
+    { id: 'print',    label: 'Printing',          icon: 'printer' },
+    { id: 'access',   label: 'Smart access & doors', icon: 'door' },
+    { id: 'clean',    label: 'Cleaning',          icon: 'broom' },
+    { id: 'general',  label: 'General query',     icon: 'message' },
+  ];
+
+  return (
+    <Screen>
+      <StatusBar />
+      <div style={{ padding: '8px 22px 0', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+        <img src="fomo/assets/logo-fomo-black-sm.png" style={{ height: 22 }} alt="FOMO" />
+        <Eyebrow style={{ color: FOMO_INK_2, fontSize: 9.5 }}>Concierge</Eyebrow>
+      </div>
+      <Hairline style={{ margin: '10px 22px 0' }} />
+
+      <div style={{ height: 'calc(100% - 30px - 33px)', overflow: 'auto', paddingBottom: 130 }}>
+        {/* ============ Header ============ */}
+        <div style={{ padding: '20px 22px 0', position: 'relative' }}>
+          <Eyebrow style={{ color: FOMO_INK_2 }}>Campus support</Eyebrow>
+          <h1 style={{
+            fontFamily: '"DM Serif Display", serif', fontWeight: 400,
+            fontSize: 32, lineHeight: 1.0, letterSpacing: '-0.02em',
+            color: FOMO_INK, margin: '8px 0 0',
+          }}>
+            How can the<br/>
+            FOMO team<br/>
+            <em style={{ fontStyle: 'italic' }}>help today?</em>
+          </h1>
+          <div style={{ fontSize: 12.5, color: FOMO_INK_2, marginTop: 12, maxWidth: 250 }}>
+            Average response · 8 minutes during campus hours. Urgent? Ring the front desk at <span style={{ color: FOMO_INK, fontWeight: 500 }}>5180</span>.
+          </div>
+
+          {/* faint flamingo cutout, top-right corner */}
+          <img src="fomo/assets/flamingo-3.png" alt="" style={{
+            position: 'absolute', right: 0, top: -4, height: 130,
+            opacity: 0.5, pointerEvents: 'none',
+          }} />
+        </div>
+
+        {/* ============ Step 1 · Category ============ */}
+        <div style={{ padding: '26px 22px 0' }}>
+          <div style={{
+            display: 'flex', alignItems: 'baseline', gap: 8, marginBottom: 12,
+          }}>
+            <span style={{
+              fontFamily: '"DM Serif Display", serif', fontStyle: 'italic',
+              fontSize: 18, color: FOMO_INK,
+            }}>01</span>
+            <Eyebrow>Category</Eyebrow>
+          </div>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 0 }}>
+            {categories.map((c, i) => {
+              const active = category === c.id;
+              return (
+                <button key={c.id} onClick={() => setCategory(c.id)} style={{
+                  background: 'transparent', border: 'none', cursor: 'pointer',
+                  padding: '14px 0', textAlign: 'left',
+                  borderTop: i === 0 ? `1px solid ${FOMO_HAIRLINE}` : `1px solid ${FOMO_BORDER}`,
+                  display: 'flex', alignItems: 'center', gap: 14,
+                }}>
+                  <div style={{
+                    width: 38, height: 38, borderRadius: 999,
+                    background: active ? FOMO_INK : 'transparent',
+                    border: active ? 'none' : `1px solid ${FOMO_BORDER}`,
+                    color: active ? '#fff' : FOMO_INK,
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    transition: 'all .15s',
+                  }}>
+                    <Icon name={c.icon} size={17} stroke={1.6} />
+                  </div>
+                  <div style={{
+                    flex: 1,
+                    fontFamily: active ? '"DM Serif Display", serif' : 'DM Sans, system-ui',
+                    fontStyle: active ? 'italic' : 'normal',
+                    fontSize: active ? 18 : 14,
+                    fontWeight: active ? 400 : 500,
+                    color: FOMO_INK,
+                  }}>{c.label}</div>
+                  <div style={{
+                    width: 18, height: 18, borderRadius: 999,
+                    background: active ? FOMO_INK : 'transparent',
+                    border: `1.5px solid ${active ? FOMO_INK : FOMO_BORDER}`,
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  }}>
+                    {active && <Icon name="check" size={11} color="#fff" stroke={2.4} />}
+                  </div>
+                </button>
+              );
+            })}
+            <div style={{ borderTop: `1px solid ${FOMO_BORDER}` }} />
+          </div>
+        </div>
+
+        {/* ============ Step 2 · Location ============ */}
+        <div style={{ padding: '26px 22px 0' }}>
+          <div style={{ display: 'flex', alignItems: 'baseline', gap: 8, marginBottom: 12 }}>
+            <span style={{
+              fontFamily: '"DM Serif Display", serif', fontStyle: 'italic',
+              fontSize: 18, color: FOMO_INK,
+            }}>02</span>
+            <Eyebrow>Location</Eyebrow>
+          </div>
+
+          {/* Building segmented */}
+          <Eyebrow style={{ color: FOMO_INK_2, fontSize: 9, marginBottom: 6 }}>Building</Eyebrow>
+          <div style={{
+            border: `1px solid ${FOMO_BORDER}`, borderRadius: 12, padding: 4,
+            background: '#fefcf6', display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)',
+          }}>
+            {['South','West','East','North'].map(b => (
+              <button key={b} onClick={() => setBuilding(b)} style={{
+                background: building === b ? FOMO_INK : 'transparent',
+                color: building === b ? '#fff' : FOMO_INK,
+                border: 'none', cursor: 'pointer',
+                padding: '10px 4px', borderRadius: 8,
+                fontFamily: 'DM Sans, system-ui', fontSize: 12, fontWeight: 500,
+              }}>{b}</button>
+            ))}
+          </div>
+
+          {/* Office input */}
+          <Eyebrow style={{ color: FOMO_INK_2, fontSize: 9, marginTop: 14, marginBottom: 6 }}>Office / floor</Eyebrow>
+          <div style={{
+            display: 'flex', alignItems: 'center', gap: 10,
+            background: '#fefcf6', border: `1px solid ${FOMO_BORDER}`, borderRadius: 12,
+            padding: '12px 14px',
+          }}>
+            <Icon name="map_pin" size={16} color={FOMO_INK_2} />
+            <input type="text" value={office} onChange={e => setOffice(e.target.value)}
+              style={{
+                flex: 1, border: 'none', background: 'transparent', outline: 'none',
+                fontFamily: 'DM Sans, system-ui', fontSize: 14, fontWeight: 500,
+                color: FOMO_INK,
+              }} />
+            <Icon name="chevron_down" size={16} color={FOMO_INK_2} />
+          </div>
+        </div>
+
+        {/* ============ Step 3 · Description ============ */}
+        <div style={{ padding: '26px 22px 0' }}>
+          <div style={{ display: 'flex', alignItems: 'baseline', gap: 8, marginBottom: 12 }}>
+            <span style={{
+              fontFamily: '"DM Serif Display", serif', fontStyle: 'italic',
+              fontSize: 18, color: FOMO_INK,
+            }}>03</span>
+            <Eyebrow>Tell us more</Eyebrow>
+          </div>
+
+          <div style={{
+            background: '#fefcf6', border: `1px solid ${FOMO_BORDER}`, borderRadius: 12,
+            padding: 14, minHeight: 110, position: 'relative',
+          }}>
+            <textarea value={desc} onChange={e => setDesc(e.target.value)}
+              placeholder="Describe the issue — model, location, what's blocked…"
+              style={{
+                width: '100%', minHeight: 64, border: 'none', background: 'transparent',
+                outline: 'none', resize: 'none',
+                fontFamily: 'DM Sans, system-ui', fontSize: 14, color: FOMO_INK,
+                lineHeight: 1.45,
+              }} />
+            <div style={{ fontSize: 10, color: FOMO_INK_2, textAlign: 'right' }}>
+              {desc.length} / 500
+            </div>
+          </div>
+
+          {/* Dashed drop-zone for attachments */}
+          <div style={{
+            marginTop: 12, border: `1.5px dashed ${FOMO_INK}`, borderRadius: 12,
+            padding: '14px', background: 'transparent',
+          }}>
+            {attachments.length > 0 && (
+              <div style={{
+                display: 'flex', flexWrap: 'wrap', gap: 8, marginBottom: 12,
+              }}>
+                {attachments.map((a, i) => (
+                  <div key={i} style={{
+                    display: 'flex', alignItems: 'center', gap: 8,
+                    background: '#fefcf6', border: `1px solid ${FOMO_BORDER}`,
+                    borderRadius: 8, padding: 6, paddingRight: 10,
+                  }}>
+                    <div style={{ width: 28, height: 28, borderRadius: 4, overflow: 'hidden' }}>
+                      <ImagePlate tone={a.tone} height={28} />
+                    </div>
+                    <div style={{ minWidth: 0 }}>
+                      <div style={{ fontSize: 11, fontWeight: 500, color: FOMO_INK, lineHeight: 1.1 }}>{a.name}</div>
+                      <div style={{ fontSize: 9.5, color: FOMO_INK_2 }}>{a.size}</div>
+                    </div>
+                    <button onClick={() => setAttachments(a => a.filter((_, j) => j !== i))} style={{
+                      background: 'transparent', border: 'none', cursor: 'pointer',
+                      padding: 4, color: FOMO_INK_2, display: 'flex',
+                    }}>
+                      <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <path d="M18 6 6 18 M6 6l12 12" />
+                      </svg>
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
+            <div style={{
+              display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 16,
+              paddingTop: attachments.length > 0 ? 8 : 0,
+              borderTop: attachments.length > 0 ? `1px solid ${FOMO_BORDER}` : 'none',
+            }}>
+              <button style={{
+                background: 'transparent', border: 'none', cursor: 'pointer',
+                display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4,
+                color: FOMO_INK, padding: 6,
+              }}>
+                <Icon name="camera" size={18} />
+                <span style={{ fontSize: 10, fontWeight: 600, letterSpacing: '0.18em', textTransform: 'uppercase' }}>Photo</span>
+              </button>
+              <div style={{ width: 1, height: 30, background: FOMO_BORDER }} />
+              <button style={{
+                background: 'transparent', border: 'none', cursor: 'pointer',
+                display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4,
+                color: FOMO_INK, padding: 6,
+              }}>
+                <Icon name="paperclip" size={18} />
+                <span style={{ fontSize: 10, fontWeight: 600, letterSpacing: '0.18em', textTransform: 'uppercase' }}>Attach file</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {/* ============ Summary preview ============ */}
+        <div style={{
+          margin: '24px 22px 0', padding: '14px 16px',
+          background: FOMO_PINK, borderRadius: 12,
+          fontSize: 12, color: FOMO_INK, lineHeight: 1.5,
+        }}>
+          <Eyebrow style={{ fontSize: 9.5, marginBottom: 6 }}>You're sending</Eyebrow>
+          <strong style={{ fontWeight: 600 }}>{categories.find(c => c.id === category)?.label}</strong>
+          {' '}ticket from <strong style={{ fontWeight: 600 }}>{building} · {office}</strong> to the community team.
+        </div>
+
+        {/* ============ Submit ============ */}
+        <div style={{ padding: '14px 22px 0' }}>
+          <PrimaryButton fullWidth size="lg" icon="arrow_right">
+            Submit ticket to community team
+          </PrimaryButton>
+          <div style={{
+            textAlign: 'center', fontSize: 10.5, color: FOMO_INK_2,
+            marginTop: 10, letterSpacing: '0.06em',
+          }}>
+            You'll get a Slack DM and push notification once we pick it up.
+          </div>
+        </div>
+      </div>
+
+      {!onNavChange && <BottomNav active={navTab} onChange={setNavTab} />}
+      {!onNavChange && <HomeIndicator />}
+    </Screen>
+  );
+}
+
+Object.assign(window, { SupportScreen });
+
+
+function CommunityScreen({ navTab: navTabProp, onNavChange } = {}) {
+  const [_navLocal, _setNavLocal] = React.useState('community');
+  const navTab = navTabProp !== undefined ? navTabProp : _navLocal;
+  const setNavTab = onNavChange || _setNavLocal;
+
+  return (
+    <Screen>
+      <StatusBar />
+      <div style={{ padding: '8px 22px 0', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+        <img src="fomo/assets/logo-fomo-black-sm.png" style={{ height: 22 }} alt="FOMO" />
+        <Eyebrow style={{ color: FOMO_INK_2, fontSize: 9.5 }}>Community</Eyebrow>
+      </div>
+      <Hairline style={{ margin: '10px 22px 0' }} />
+
+      <div style={{
+        height: 'calc(100% - 30px - 33px)',
+        display: 'flex', flexDirection: 'column',
+        alignItems: 'center', justifyContent: 'center',
+        padding: '0 32px', textAlign: 'center',
+        position: 'relative', overflow: 'hidden',
+      }}>
+
+        {/* Background flamingo */}
+        <img src="fomo/assets/flamingo-2.png" alt="" style={{
+          position: 'absolute', right: -40, bottom: 60,
+          height: 320, opacity: 0.12, pointerEvents: 'none',
+          filter: 'grayscale(0.3)',
+        }} />
+
+        {/* Pill badge */}
+        <div style={{
+          display: 'inline-flex', alignItems: 'center', gap: 6,
+          background: FOMO_PINK, borderRadius: 999,
+          padding: '6px 14px', marginBottom: 28,
+        }}>
+          <span style={{
+            width: 6, height: 6, borderRadius: 999,
+            background: FOMO_INK, display: 'inline-block',
+          }} />
+          <Eyebrow style={{ fontSize: 9.5, color: FOMO_INK, letterSpacing: '0.2em' }}>
+            Coming soon
+          </Eyebrow>
+        </div>
+
+        {/* Headline */}
+        <h1 style={{
+          fontFamily: '"DM Serif Display", serif', fontWeight: 400,
+          fontSize: 40, lineHeight: 1.0, letterSpacing: '-0.03em',
+          color: FOMO_INK, margin: '0 0 20px',
+        }}>
+          Your campus,<br/>
+          <em style={{ fontStyle: 'italic' }}>together.</em>
+        </h1>
+
+        <div style={{
+          fontSize: 13.5, color: FOMO_INK_2, lineHeight: 1.6,
+          maxWidth: 260, marginBottom: 40,
+        }}>
+          Member profiles, shared events, office collabs — the FOMO community hub is on its way.
+        </div>
+
+        {/* Feature preview chips */}
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, justifyContent: 'center', marginBottom: 40 }}>
+          {['Member directory', 'Shared spaces', 'Event RSVPs', 'Company pages', 'Collab board'].map(f => (
+            <span key={f} style={{
+              fontSize: 11, fontWeight: 500,
+              padding: '6px 12px', borderRadius: 999,
+              border: `1px solid ${FOMO_BORDER}`,
+              color: FOMO_INK_2, background: '#fefcf6',
+            }}>{f}</span>
+          ))}
+        </div>
+
+        {/* Notify CTA */}
+        <div style={{
+          background: FOMO_INK, borderRadius: 16,
+          padding: '18px 22px', width: '100%', maxWidth: 320,
+          display: 'flex', alignItems: 'center', gap: 14,
+        }}>
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <div style={{ fontSize: 13, fontWeight: 600, color: '#fff', marginBottom: 2 }}>
+              Get early access
+            </div>
+            <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.55)' }}>
+              We'll ping you on Slack when it's live.
+            </div>
+          </div>
+          <button style={{
+            background: FOMO_PINK, border: 'none', borderRadius: 10,
+            padding: '10px 14px', cursor: 'pointer',
+            fontFamily: 'DM Sans, system-ui', fontSize: 12, fontWeight: 600,
+            color: FOMO_INK, whiteSpace: 'nowrap',
+            display: 'flex', alignItems: 'center', gap: 6,
+          }}>
+            Notify me
+            <Icon name="arrow_right" size={13} color={FOMO_INK} />
+          </button>
+        </div>
+
+      </div>
+
+      {!onNavChange && <BottomNav active={navTab} onChange={setNavTab} />}
+      {!onNavChange && <HomeIndicator />}
+    </Screen>
+  );
+}
+
+
+function App() {
+  const [activeTab, setActiveTab] = React.useState('home');
+  const SCREENS = {
+    home: HomeScreen, bookings: RoomsScreen,
+    food: Soi21Screen, support: SupportScreen,
+    community: CommunityScreen,
+  };
+  const safeTab = SCREENS[activeTab] ? activeTab : 'home';
+  const ActiveScreen = SCREENS[safeTab];
+  return (
+    <div style={{ position:'fixed', inset:0, display:'flex', justifyContent:'center', background:'#e8e4df' }}>
+      <div style={{ position:'relative', width:'100%', maxWidth:480, height:'100%',
+        background:FOMO_BG, overflow:'hidden', fontFamily:'DM Sans, system-ui' }}>
+        <ActiveScreen navTab={safeTab} onNavChange={setActiveTab} />
+        <BottomNav active={safeTab} onChange={setActiveTab} />
+        <HomeIndicator />
+      </div>
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+
+</script>
+
+<script>
+(function() {
+  var showErr = function(msg) {
+    var d = document.getElementById('err');
+    d.style.display = 'block';
+    d.textContent = msg;
+  };
+  var run = function() {
+    if (!window.Babel) { setTimeout(run, 50); return; }
+    var src = document.getElementById('app-code').textContent;
+    var out;
+    try {
+      out = Babel.transform(src, { presets: ['react'] });
+    } catch(e) {
+      showErr('BABEL COMPILE ERROR:\n' + e.message + '\n\n' + (e.stack||''));
+      return;
+    }
+    try {
+      var fn = new Function(out.code);
+      fn();
+    } catch(e) {
+      showErr('RUNTIME ERROR:\n' + e.message + '\n\n' + (e.stack||''));
+    }
+  };
+  run();
+})();
+</script>
+
+
+</body>
+</html>
